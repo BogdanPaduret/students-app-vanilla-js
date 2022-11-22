@@ -73,6 +73,9 @@ main section.cards-list.container article.card{
     justify-items: center;
 }
 
+/* main section.cards-list.container article.card .card-item{
+    
+} */
 
 main section.cards-list.container article.card .card-item.portrait{
     width: 75px;
@@ -82,10 +85,15 @@ main section.cards-list.container article.card .card-item.portrait{
     object-fit:cover;
 
     border-radius: 50%;
-
-    position: relative;
-    z-index: 0;
 }
+main section.cards-list.container article.card .card-item.name{
+    font-size: 22px;
+}
+
+main section.cards-list.container article.card .card-item.name.double-line{
+    font-size: 20px;
+}
+
 main section.cards-list.container article.card .card-item.horizontal-line{
     width: 100%;
 
