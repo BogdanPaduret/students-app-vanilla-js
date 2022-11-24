@@ -1,23 +1,47 @@
 // page init
-function init(cardsPerPage) {
+function init(cardsPerPage, index) {
+    let totalCards = data.length;
+    console.log("There are " + totalCards + " total cards");
+    let nrPages = Math.ceil(totalCards / cardsPerPage);
+    console.log("At " + cardsPerPage + " there are " + nrPages + " pages");
+
+    cardsContainer.textContent = "";
+    pagesContainer.textContent = "";
+
+    createPages(cardsPerPage, index);
+}
+
+// page creation
+function createPages(cardsPerPage, start) {
     let totalCards = data.length;
     console.log("There are " + totalCards + " total cards");
     let nrPages = Math.ceil(totalCards / cardsPerPage);
     console.log("At " + cardsPerPage + " there are " + nrPages + " pages");
     for (let i = 0; i < nrPages; i++) {
-        let start = i * cardsPerPage;
-        let increment = cardsPerPage;
-
-        if (start + increment >= totalCards) {
-            increment = totalCards - start;
-        }
-
-        console.log(start);
-        console.log(increment);
-
-        loadCards(data, start, increment);
+        console.log("yey" + i);
+        generatePage(i + 1, Math.round(start / cardsPerPage));
     }
-    // loadCards(data, 0, 0);
+    loadCards(data, start, cardsPerPage);
+}
+function generatePage(pageNumber, currentPage) {
+    let article = document.createElement("article");
+    let page = document.createElement("p");
+
+    article.classList.add("page-element", "box", "page-" + pageNumber);
+    page.classList.add("page-element", "page-number", "page-" + pageNumber);
+    console.log(page);
+    console.log(currentPage + 1);
+    if (pageNumber == currentPage + 1) {
+        article.classList.add("current-page");
+    }
+
+    page.textContent = pageNumber;
+
+    article.appendChild(page);
+    pagesContainer.appendChild(article);
+
+    console.log("Generated page:");
+    console.log(article);
 }
 
 // card loading
