@@ -1,6 +1,23 @@
 // page init
-function init() {
-    loadCards(data, 0, 0);
+function init(cardsPerPage) {
+    let totalCards = data.length;
+    console.log("There are " + totalCards + " total cards");
+    let nrPages = Math.ceil(totalCards / cardsPerPage);
+    console.log("At " + cardsPerPage + " there are " + nrPages + " pages");
+    for (let i = 0; i < nrPages; i++) {
+        let start = i * cardsPerPage;
+        let increment = cardsPerPage;
+
+        if (start + increment >= totalCards) {
+            increment = totalCards - start;
+        }
+
+        console.log(start);
+        console.log(increment);
+
+        loadCards(data, start, increment);
+    }
+    // loadCards(data, 0, 0);
 }
 
 // card loading
@@ -34,13 +51,11 @@ function loadCards(arr, start, amount) {
         createCard(arr[lowerLimit]);
     }
 }
-
-// card creation
 function createCard(input) {
     // generate elements [article, portrait, name, email, horizontalLine, joinDate]
     let cardElements = generateCardElements(input);
 
-    console.log(cardElements);
+    // console.log(cardElements);
 
     cardElements.article.appendChild(cardElements.portrait);
     cardElements.article.appendChild(cardElements.name);
@@ -63,51 +78,45 @@ function generateCardElements(item) {
 
     // populate elements
 
+    // COMMON CLASSES CARDS
+    let commonClasses = document.createElement("p").classList;
+    commonClasses.add(item.name.first + "-" + item.name.last, "card");
+
     // -- article
-    article.className = "card";
+    article.classList = commonClasses;
+
+    // COMMON CLASSES CARD-ITEMS
+    commonClasses.remove("card");
+    commonClasses.add("card-item");
 
     // -- portrait
-    let separator = " ";
-    let classes = [
-        "card-item",
-        item.name.first + "-" + item.name.last,
-        "portrait",
-    ];
-
-    portrait.className = stringifyArray(classes, separator);
+    portrait.classList = commonClasses;
+    portrait.classList.add("portrait");
     portrait.src = item.picture.thumbnail;
     portrait.alt = "thumbnail-" + item.name.first + "-" + item.name.last;
 
     // -- name
-    classes.pop();
-    classes.push("name");
-
     name.textContent = item.name.first + " " + item.name.last;
-    name.className = stringifyArray(classes, separator);
+    name.classList = commonClasses;
+    name.classList.add("name");
 
     if ((item.name.first + " " + item.name.last).length >= 15) {
-        name.className = name.className.concat(" double-line");
+        name.classList.add("double-line");
     }
 
     // -- email
-    classes.pop();
-    classes.push("email");
-
     email.textContent = item.email;
-    email.className = stringifyArray(classes, separator);
+    email.classList = commonClasses;
+    email.classList.add("email");
 
-    // -- horizontal line
-    classes.pop();
-    classes.push("horizontal-line");
-
-    horizontalLine.className = stringifyArray(classes, separator);
+    // // -- horizontal line
+    horizontalLine.classList = commonClasses;
+    horizontalLine.classList.add("horizontal-line");
 
     // -- join date
-    classes.pop();
-    classes.push("join-date");
-
     joinDate.textContent = "Joined on " + item.registered.date;
-    joinDate.className = stringifyArray(classes, separator);
+    joinDate.classList = commonClasses;
+    joinDate.classList.add("join-date");
 
     // control
     console.log(
@@ -117,14 +126,137 @@ function generateCardElements(item) {
     return { article, portrait, name, email, horizontalLine, joinDate };
 }
 
-// helpers
-function stringifyArray(arr, separator) {
-    let string = "";
+// maximize card
+function maximizeCard(card) {
+    let cardItems = card.children;
+    let email = cardItems[2].textContent;
+
+    let cardInfo = retrieveCardInfo(email);
+    generateMaxiCard(cardInfo);
+}
+function generateMaxiCard(cardInfo) {
+    let elements = generateMaximizedElements(cardInfo);
+    console.log(elements);
+
+    elements.article.appendChild(elements.closeButton);
+    elements.article.appendChild(elements.portrait);
+    elements.article.appendChild(elements.name);
+    elements.article.appendChild(elements.email);
+    elements.article.appendChild(elements.horizontalLine);
+    elements.article.appendChild(elements.joinDate);
+    elements.article.appendChild(elements.age);
+
+    maximizedWindow.appendChild(elements.article);
+    stylizeMaxiWindow(maximizedWindow);
+    stylizeMaxiCard(elements.article);
+    stylizeMaxiClose(elements.closeButton);
+}
+function getCard(element) {
+    let classes = element.classList;
+    if (classes.contains("card")) {
+        return element;
+    } else if (classes.contains("card-item")) {
+        return element.parentNode;
+    } else {
+        return null;
+    }
+}
+function generateMaximizedElements(item) {
+    let thumbnailCardElements = generateCardElements(item);
+
+    let article = thumbnailCardElements.article;
+    let portrait = thumbnailCardElements.portrait;
+    let name = thumbnailCardElements.name;
+    let email = thumbnailCardElements.email;
+    let horizontalLine = thumbnailCardElements.horizontalLine;
+    let joinDate = thumbnailCardElements.joinDate;
+    let age = document.createElement("p");
+    let closeButton = document.createElement("img");
+
+    // populate elements
+    portrait.src = item.picture.large;
+    age.textContent = "Account age: " + item.registered.age + " years";
+    closeButton.src = "pictures/close.png";
+
+    // classes refactor for normal card items
+    let elements = { portrait, name, email, horizontalLine, joinDate };
+
+    let arr = Object.values(elements);
+
     for (let i = 0; i < arr.length; i++) {
-        string += arr[i];
-        if (i < arr.length - 1) {
-            string += separator;
+        arr[i].classList.replace("card-item", "maxi-card-item");
+    }
+
+    Object.assign(elements, { article, age, closeButton });
+
+    // class refactor for article class
+    article.classList.replace("card", "maxi-card");
+
+    // classes for new elements
+    let commonClasses = document.createElement("p").classList;
+    copyClasses(name.classList, commonClasses);
+    commonClasses.remove("name");
+
+    age.classList = commonClasses;
+    age.classList.add("age");
+
+    closeButton.classList = commonClasses;
+    closeButton.classList.add("close");
+
+    // return
+    return elements;
+}
+function retrieveCardInfo(email) {
+    for (let i = 0; i < data.length; i++) {
+        if (data[i].email == email) {
+            return data[i];
         }
     }
-    return string;
+    return null;
+}
+
+// stylize maxi card functions
+function stylizeMaxiWindow(window) {
+    let style = window.style;
+
+    style.position = "fixed";
+    style.top = "0";
+    style.left = "0";
+    style.height = "100%";
+    style.width = "100%";
+    style.backgroundColor = "rgba(142, 134, 135, 0.5)";
+    style.display = "flex";
+    style.flexDirection = "column";
+    style.alignContent = "center";
+    style.justifyContent = "center";
+    style.alignItems = "center";
+    style.justifyItems = "center";
+}
+function stylizeMaxiCard(card) {
+    let style = card.style;
+
+    style.width = "400px";
+    style.height = "400px";
+    style.boxShadow = "rgba(99, 99, 99, 0.2) 0px 2px 8px 0px";
+    style.borderRadius = "5px";
+    style.backgroundColor = "white";
+    style.display = "flex";
+    style.gap = "0px";
+    style.flexDirection = "column";
+    style.justifyContent = "flex-start";
+    style.alignContent = "center";
+    style.justifyItems = "center";
+    style.alignItems = "center";
+    style.padding = "15px";
+    style.borderTopRightRadius = "25px";
+}
+function stylizeMaxiClose(item) {
+    let style = item.style;
+}
+
+// helpers
+function copyClasses(from, to) {
+    for (let i = 0; i < from.length; i++) {
+        to.add(from[i]);
+    }
 }
