@@ -72,6 +72,9 @@ main section.cards-list.container article.card{
     align-items: center;
     justify-items: center;
 }
+main section.cards-list.container article.card:hover{
+    cursor: pointer;
+}
 
 /* main section.cards-list.container article.card .card-item{
     
@@ -144,6 +147,9 @@ main section.cards-list.container article.card .card-item.join-date{
     align-self: flex-end;
     margin: 0px;
     position: fixed;
+}
+.maxi-card-item.close:hover{
+    cursor: pointer;
 }
 .maxi-card-item.portrait{
     width: 150px;
