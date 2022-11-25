@@ -114,13 +114,14 @@ main section.cards-list.container article.card .card-item.join-date{
     left: 0px;
     width: 100%;
     height: 100%;
-    background-color: rgba(142,134,135,0.5);
-    display: flex;
-    flex-direction: column;
+    background-color: rgba(142,134,135,0.5); */
+    /* display: flex;
+    flex-direction: row;
     align-content: center;
     justify-content: center;
     align-items: center;
-    justify-items: center; */
+    justify-items: center;
+    gap: 30px; */
 }
 .maxi-card{
     width: 400px;
@@ -162,6 +163,9 @@ main section.cards-list.container article.card .card-item.join-date{
     font-size: 32px;
     margin: 2.5px 0px;
 }
+.maxi-card-item.name.double-line{
+    font-size: 28px;
+}
 .maxi-card-item.email{
     margin: 2.5px 0px 0px 0px;
 }
@@ -173,6 +177,9 @@ main section.cards-list.container article.card .card-item.join-date{
 }
 .maxi-card-item.join-date{
     margin: 0px 0px 5px 0px;
+}
+.arrow:hover{
+    cursor: pointer;
 }
 
 /* page styling */
