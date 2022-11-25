@@ -155,31 +155,44 @@ function maximizeCard(card) {
     let cardItems = card.children;
     let email = cardItems[2].textContent;
 
-    let cardInfo = retrieveCardInfo(email);
-    generateMaxiCard(cardInfo);
+    let index = retrieveCardIndex(email, 0);
+    let cardInfo = data[index];
+    generateMaxiCard(cardInfo, index);
 }
-function generateMaxiCard(cardInfo) {
-    let elements = generateMaximizedElements(cardInfo);
-    console.log(elements);
+function generateMaxiCard(cardInfo, index) {
+    let card = generateMaximizedElements(cardInfo);
+    console.log(card);
 
-    elements.article.appendChild(elements.closeButton);
-    elements.article.appendChild(elements.portrait);
-    elements.article.appendChild(elements.name);
-    elements.article.appendChild(elements.email);
-    elements.article.appendChild(elements.horizontalLine);
-    elements.article.appendChild(elements.joinDate);
-    elements.article.appendChild(elements.age);
+    card.article.appendChild(card.closeButton);
+    card.article.appendChild(card.portrait);
+    card.article.appendChild(card.name);
+    card.article.appendChild(card.email);
+    card.article.appendChild(card.horizontalLine);
+    card.article.appendChild(card.joinDate);
+    card.article.appendChild(card.age);
 
-    maximizedWindow.appendChild(elements.article);
+    if (index != 0) {
+        card.article.appendChild(card.leftArrow);
+    }
+    if (index != data.length - 1) {
+        card.article.appendChild(card.rightArrow);
+    }
+
+    maximizedWindow.appendChild(card.article);
+
     stylizeMaxiWindow(maximizedWindow);
-    stylizeMaxiCard(elements.article);
-    stylizeMaxiClose(elements.closeButton);
+
+    // stylizeMaxiCard(card.article);
+    // stylizeMaxiClose(card.closeButton);
 }
 function getCard(element) {
     let classes = element.classList;
-    if (classes.contains("card")) {
+    if (classes.contains("card") || classes.contains("maxi-card")) {
         return element;
-    } else if (classes.contains("card-item")) {
+    } else if (
+        classes.contains("card-item") ||
+        classes.contains("maxi-card-item")
+    ) {
         return element.parentNode;
     } else {
         return null;
@@ -197,6 +210,9 @@ function generateMaximizedElements(item) {
     let age = document.createElement("p");
     let closeButton = document.createElement("img");
 
+    let leftArrow = generateArrow(-1);
+    let rightArrow = generateArrow(1);
+
     // populate elements
     portrait.src = item.picture.large;
     age.textContent = "Account age: " + item.registered.age + " years";
@@ -211,7 +227,13 @@ function generateMaximizedElements(item) {
         arr[i].classList.replace("card-item", "maxi-card-item");
     }
 
-    Object.assign(elements, { article, age, closeButton });
+    Object.assign(elements, {
+        article,
+        age,
+        closeButton,
+        leftArrow,
+        rightArrow,
+    });
 
     // class refactor for article class
     article.classList.replace("card", "maxi-card");
@@ -227,17 +249,50 @@ function generateMaximizedElements(item) {
     closeButton.classList = commonClasses;
     closeButton.classList.add("close");
 
+    leftArrow.classList = commonClasses;
+    leftArrow.classList.add("arrow", "left");
+
+    rightArrow.classList = commonClasses;
+    rightArrow.classList.add("arrow", "right");
+
     // return
     return elements;
 }
-function retrieveCardInfo(email) {
+function retrieveCardInfo(email, offset) {
+    let index = retrieveCardIndex(email, offset);
+
+    if (index != null) {
+        return data[index];
+    } else {
+        return index;
+    }
+}
+function retrieveCardIndex(email, offset) {
     for (let i = 0; i < data.length; i++) {
         if (data[i].email == email) {
-            return data[i];
+            return i + offset;
         }
     }
     return null;
 }
+function generateArrow(arrowDirection) {
+    let arrow = document.createElement("img");
+    arrow.src = "/pictures/arrow.png";
+    arrow.style.height = "50px";
+    arrow.style.position = "relative";
+
+    if (arrowDirection < 0) {
+        arrow.style.transform = "scaleX(-1)";
+        arrow.style.right = "160px";
+        arrow.style.bottom = "150px";
+    } else {
+        arrow.style.left = "160px";
+        arrow.style.bottom = "200px";
+    }
+    return arrow;
+}
+function goToLeft(card) {}
+function goToRight(card) {}
 
 // stylize maxi card functions
 function stylizeMaxiWindow(window) {
@@ -250,11 +305,12 @@ function stylizeMaxiWindow(window) {
     style.width = "100%";
     style.backgroundColor = "rgba(142, 134, 135, 0.5)";
     style.display = "flex";
-    style.flexDirection = "column";
+    style.flexDirection = "row";
     style.alignContent = "center";
     style.justifyContent = "center";
     style.alignItems = "center";
     style.justifyItems = "center";
+    style.gap = "30px";
 }
 function stylizeMaxiCard(card) {
     let style = card.style;

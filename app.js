@@ -4,7 +4,7 @@ let cardsContainer = document.querySelector(
 let maximizedWindow = document.querySelector("main section.maximized");
 let pagesContainer = document.querySelector("footer section.pages.container");
 
-let cardsPerPage = 5;
+let cardsPerPage = 6;
 
 init(cardsPerPage, 0);
 
@@ -28,11 +28,28 @@ cardsContainer.addEventListener("click", (e) => {
 
 maximizedWindow.addEventListener("click", (e) => {
     let element = e.target;
-    if (element.classList.contains("close")) {
-        maximizedWindow
-            .querySelector("article.maxi-card")
-            .remove(":first-child");
+    let classes = element.classList;
+    // console.log(classes);
+    if (classes.contains("close")) {
+        maximizedWindow.textContent = "";
         maximizedWindow.removeAttribute("style");
+    } else if (classes.contains("arrow")) {
+        let card = getCard(element);
+        let cardItems = card.children;
+        let email = cardItems[3].textContent;
+        console.log(email);
+        let cardIndex = retrieveCardIndex(email, 0);
+        console.log(cardIndex);
+
+        if (classes.contains("left") && cardIndex > 0) {
+            maximizedWindow.textContent = "";
+            let cardInfo = data[cardIndex - 1];
+            generateMaxiCard(cardInfo, cardIndex - 1);
+        } else if (classes.contains("right")) {
+            maximizedWindow.textContent = "";
+            let cardInfo = data[cardIndex + 1];
+            generateMaxiCard(cardInfo, cardIndex + 1);
+        }
     }
 });
 
