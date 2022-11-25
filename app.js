@@ -34,12 +34,10 @@ maximizedWindow.addEventListener("click", (e) => {
         maximizedWindow.textContent = "";
         maximizedWindow.removeAttribute("style");
     } else if (classes.contains("arrow")) {
-        let card = getCard(element);
-        let cardItems = card.children;
-        let email = cardItems[3].textContent;
-        console.log(email);
+        let card = getMaxiCard(element);
+        let cardItems = card.children[2].children;
+        let email = cardItems[2].textContent;
         let cardIndex = retrieveCardIndex(email, 0);
-        console.log(cardIndex);
 
         if (classes.contains("left") && cardIndex > 0) {
             maximizedWindow.textContent = "";

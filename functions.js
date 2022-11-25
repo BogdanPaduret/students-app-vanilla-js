@@ -124,9 +124,9 @@ function generateCardElements(item) {
     name.classList = commonClasses;
     name.classList.add("name");
 
-    if ((item.name.first + " " + item.name.last).length >= 15) {
-        name.classList.add("double-line");
-    }
+    // if ((item.name.first + " " + item.name.last).length >= 15) {
+    //     name.classList.add("double-line");
+    // }
 
     // -- email
     email.textContent = item.email;
@@ -163,27 +163,36 @@ function generateMaxiCard(cardInfo, index) {
     let card = generateMaximizedElements(cardInfo);
     console.log(card);
 
-    card.article.appendChild(card.closeButton);
-    card.article.appendChild(card.portrait);
-    card.article.appendChild(card.name);
-    card.article.appendChild(card.email);
-    card.article.appendChild(card.horizontalLine);
-    card.article.appendChild(card.joinDate);
-    card.article.appendChild(card.age);
+    card.article.appendChild(card.upperContainer);
+    card.article.appendChild(card.leftContainer);
+    card.article.appendChild(card.mainContainer);
+    card.article.appendChild(card.rightContainer);
+    card.article.appendChild(card.lowerContainer);
+
+    card.upperContainer.appendChild(card.closeButton);
+
+    card.mainContainer.appendChild(card.portrait);
+    card.mainContainer.appendChild(card.name);
+    card.mainContainer.appendChild(card.email);
+    card.mainContainer.appendChild(card.horizontalLine);
+    card.mainContainer.appendChild(card.joinDate);
+    card.mainContainer.appendChild(card.age);
 
     if (index != 0) {
-        card.article.appendChild(card.leftArrow);
+        card.leftContainer.appendChild(card.leftArrow);
+    } else {
+        card.rightArrow.style.bottom = "150px";
     }
     if (index != data.length - 1) {
-        card.article.appendChild(card.rightArrow);
+        card.rightContainer.appendChild(card.rightArrow);
     }
+
+    card.lowerContainer.appendChild(card.editButton);
 
     maximizedWindow.appendChild(card.article);
 
-    stylizeMaxiWindow(maximizedWindow);
-
-    // stylizeMaxiCard(card.article);
-    // stylizeMaxiClose(card.closeButton);
+    styleMaxiWindow(maximizedWindow);
+    styleMaxiCard(card);
 }
 function getCard(element) {
     let classes = element.classList;
@@ -198,6 +207,16 @@ function getCard(element) {
         return null;
     }
 }
+function getMaxiCard(element) {
+    while (!element.classList.contains("maximized")) {
+        let classes = element.classList;
+        if (classes.contains("maxi-card")) {
+            return element;
+        }
+        element = element.parentNode;
+    }
+    return null;
+}
 function generateMaximizedElements(item) {
     let thumbnailCardElements = generateCardElements(item);
 
@@ -207,16 +226,27 @@ function generateMaximizedElements(item) {
     let email = thumbnailCardElements.email;
     let horizontalLine = thumbnailCardElements.horizontalLine;
     let joinDate = thumbnailCardElements.joinDate;
+
     let age = document.createElement("p");
+
     let closeButton = document.createElement("img");
+    let editButton = document.createElement("button");
 
     let leftArrow = generateArrow(-1);
     let rightArrow = generateArrow(1);
+
+    // containers
+    let mainContainer = document.createElement("div");
+    let upperContainer = document.createElement("div");
+    let lowerContainer = document.createElement("div");
+    let leftContainer = document.createElement("div");
+    let rightContainer = document.createElement("div");
 
     // populate elements
     portrait.src = item.picture.large;
     age.textContent = "Account age: " + item.registered.age + " years";
     closeButton.src = "pictures/close.png";
+    editButton.textContent = "Edit profile";
 
     // classes refactor for normal card items
     let elements = { portrait, name, email, horizontalLine, joinDate };
@@ -233,6 +263,12 @@ function generateMaximizedElements(item) {
         closeButton,
         leftArrow,
         rightArrow,
+        editButton,
+        mainContainer,
+        upperContainer,
+        lowerContainer,
+        leftContainer,
+        rightContainer,
     });
 
     // class refactor for article class
@@ -254,6 +290,24 @@ function generateMaximizedElements(item) {
 
     rightArrow.classList = commonClasses;
     rightArrow.classList.add("arrow", "right");
+
+    editButton.classList = commonClasses;
+    editButton.classList.add("edit");
+
+    mainContainer.classList = commonClasses;
+    mainContainer.classList.add("main-container");
+
+    upperContainer.classList = commonClasses;
+    upperContainer.classList.add("upper-container");
+
+    lowerContainer.classList = commonClasses;
+    lowerContainer.classList.add("lower-container");
+
+    leftContainer.classList = commonClasses;
+    leftContainer.classList.add("left-container");
+
+    rightContainer.classList = commonClasses;
+    rightContainer.classList.add("right-container");
 
     // return
     return elements;
@@ -279,15 +333,9 @@ function generateArrow(arrowDirection) {
     let arrow = document.createElement("img");
     arrow.src = "/pictures/arrow.png";
     arrow.style.height = "50px";
-    arrow.style.position = "relative";
 
     if (arrowDirection < 0) {
         arrow.style.transform = "scaleX(-1)";
-        arrow.style.right = "160px";
-        arrow.style.bottom = "150px";
-    } else {
-        arrow.style.left = "160px";
-        arrow.style.bottom = "200px";
     }
     return arrow;
 }
@@ -295,7 +343,7 @@ function goToLeft(card) {}
 function goToRight(card) {}
 
 // stylize maxi card functions
-function stylizeMaxiWindow(window) {
+function styleMaxiWindow(window) {
     let style = window.style;
 
     style.position = "fixed";
@@ -312,26 +360,143 @@ function stylizeMaxiWindow(window) {
     style.justifyItems = "center";
     style.gap = "30px";
 }
-function stylizeMaxiCard(card) {
-    let style = card.style;
+function styleMaxiCard(card) {
+    styleMaxiArticle(card.article);
+    styleMaxiContainers(card);
+
+    styleMaxiClose(card.closeButton);
+    styleMaxiPortrait(card.portrait);
+    styleMaxiName(card.name);
+    styleMaxiEmail(card.email);
+    styleMaxiHorizontalLine(card.horizontalLine);
+    styleMaxiJoinDate(card.joinDate);
+
+    styleEditButton(card.editButton);
+}
+
+function styleMaxiArticle(cardArticle) {
+    let style = cardArticle.style;
 
     style.width = "400px";
     style.height = "400px";
     style.boxShadow = "rgba(99, 99, 99, 0.2) 0px 2px 8px 0px";
     style.borderRadius = "5px";
     style.backgroundColor = "white";
-    style.display = "flex";
+
+    // style.display = "flex";
+    // style.flexDirection = "column";
+    // style.justifyContent = "flex-start";
+
+    style.display = "grid";
+    style.gridTemplateColumns = "50px 270px 50px";
+    style.gridTemplateRows = "20px 320px 30px";
+
+    style.gridTemplateAreas = '"up up up" "le ma ri" "lo lo lo"';
+
     style.gap = "0px";
-    style.flexDirection = "column";
-    style.justifyContent = "flex-start";
     style.alignContent = "center";
     style.justifyItems = "center";
     style.alignItems = "center";
     style.padding = "15px";
     style.borderTopRightRadius = "25px";
 }
-function stylizeMaxiClose(item) {
+function styleMaxiContainers(card) {
+    let main = card.mainContainer.style;
+    let upper = card.upperContainer.style;
+    let lower = card.lowerContainer.style;
+    let left = card.leftContainer.style;
+    let right = card.rightContainer.style;
+
+    main.gridArea = "ma";
+    upper.gridArea = "up";
+    lower.gridArea = "lo";
+    left.gridArea = "le";
+    right.gridArea = "ri";
+
+    main.width = "100%";
+    main.height = "100%";
+    main.display = "flex";
+    main.flexDirection = "column";
+    main.justifyContent = "flex-start";
+    main.alignContent = "center";
+    main.justifyItems = "center";
+    main.alignItems = "center";
+
+    upper.width = "100%";
+    upper.height = "100%";
+    upper.display = "flex";
+    upper.flexDirection = "row-reverse";
+
+    left.height = "100%";
+    left.display = "flex";
+    left.flexDirection = "column";
+    left.alignContent = "center";
+    left.justifyContent = "center";
+
+    right.height = "100%";
+    right.display = "flex";
+    right.flexDirection = "column";
+    right.alignContent = "center";
+    right.justifyContent = "center";
+
+    lower.width = "100%";
+    lower.height = "100%";
+    lower.display = "flex";
+    lower.flexDirection = "row";
+    lower.alignContent = "center";
+    lower.justifyContent = "center";
+}
+
+function styleMaxiClose(item) {
     let style = item.style;
+
+    style.width = "20px";
+    style.height = "20px";
+    style.margin = "0px";
+
+    // style.alignSelf = "flex-start";
+}
+function styleMaxiPortrait(portrait) {
+    let s = portrait.style;
+
+    s.width = "150px";
+    s.height = "150px";
+    s.objectFit = "cover";
+    s.borderRadius = "50%";
+    s.margin = "00px 0px 10px 0px";
+}
+function styleMaxiName(name) {
+    let s = name.style;
+
+    if (name.textContent.length < 15) {
+        s.fontSize = "32px";
+        s.margin = "2.5px 0px";
+    } else {
+        s.fontSize = "28px";
+        s.margin = "5px 0px";
+    }
+}
+function styleMaxiEmail(email) {
+    let s = email.style;
+
+    s.margin = "2.5px 0px 0px 0px";
+}
+function styleMaxiHorizontalLine(horizontalLine) {
+    let s = horizontalLine.style;
+
+    s.width = "100%";
+    s.height = "0px";
+    s.margin = "20px 0px";
+}
+function styleMaxiJoinDate(joinDate) {
+    let s = joinDate.style;
+
+    s.margin = "0px 0px 5px 0px";
+}
+
+// TO DO!
+function styleEditButton(button) {
+    let style = button.style;
 }
 
 // helpers
