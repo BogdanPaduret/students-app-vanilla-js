@@ -1,11 +1,11 @@
-*{
+* {
     font-family: Arial, Helvetica, sans-serif;
     padding: 0px;
     margin: 0px;
     box-sizing: border-box;
 }
 
-body{
+body {
     background-color: #e6eefb;
     padding: 50px;
 
@@ -17,17 +17,17 @@ body{
     align-items: center;
 }
 
-header{
+header {
     width: 100%;
 }
 
-main{
+main {
     display: flex;
     flex-direction: column;
     gap: 25px;
 }
 
-main section.cards-list.container{
+main section.cards-list.container {
     /* border: 1px solid black; */
 
     box-sizing: content-box;
@@ -46,7 +46,7 @@ main section.cards-list.container{
 
 }
 
-main section.cards-list.container article.card{
+main section.cards-list.container article.card {
     /* border: 1px solid red; */
 
     flex: 0 0 auto;
@@ -72,7 +72,8 @@ main section.cards-list.container article.card{
     align-items: center;
     justify-items: center;
 }
-main section.cards-list.container article.card:hover{
+
+main section.cards-list.container article.card:hover {
     cursor: pointer;
 }
 
@@ -80,34 +81,36 @@ main section.cards-list.container article.card:hover{
     
 } */
 
-main section.cards-list.container article.card .card-item.portrait{
+main section.cards-list.container article.card .card-item.portrait {
     width: 75px;
     height: 75px;
     margin-bottom: 5px;
 
-    object-fit:cover;
+    object-fit: cover;
 
     border-radius: 50%;
 }
-main section.cards-list.container article.card .card-item.name{
+
+main section.cards-list.container article.card .card-item.name {
     font-size: 22px;
 }
 
-main section.cards-list.container article.card .card-item.name.double-line{
+main section.cards-list.container article.card .card-item.name.double-line {
     font-size: 20px;
 }
 
-main section.cards-list.container article.card .card-item.horizontal-line{
+main section.cards-list.container article.card .card-item.horizontal-line {
     width: 100%;
 
     border: 1px solid #dfdfdf;
 }
-main section.cards-list.container article.card .card-item.join-date{
+
+main section.cards-list.container article.card .card-item.join-date {
     color: rgb(142, 134, 135);
 }
 
 
-.maximized{
+.maximized {
     /* visibility: hidden; */
     position: fixed;
     /* top: 0px;
@@ -122,18 +125,19 @@ main section.cards-list.container article.card .card-item.join-date{
     align-items: center;
     justify-items: center;
     gap: 30px; */
-    grid-template-areas: ;
 }
-.maxi-card-item.close:hover{
+
+.maxi-card-item.close:hover {
     cursor: pointer;
 }
-.arrow:hover{
+
+.arrow:hover {
     cursor: pointer;
 }
 
 /* page styling */
 footer section.pages.container,
-footer section.pages.container *{
+footer section.pages.container * {
     display: flex;
     flex-direction: row;
     align-content: center;
@@ -143,7 +147,7 @@ footer section.pages.container *{
     gap: 10px;
 }
 
-footer section.pages.container article.page-element{
+footer section.pages.container article.page-element {
     width: 30px;
     height: 30px;
     font-weight: normal;
@@ -153,25 +157,73 @@ footer section.pages.container article.page-element{
     box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
     color: rgb(142, 134, 135);
 }
-footer section.pages.container article.page-element:hover{
+
+footer section.pages.container article.page-element:hover {
     cursor: pointer;
     color: grey;
     font-weight: bold;
 }
+
 footer section.pages.container article.page-element.current-page {
     background-color: grey;
     color: white;
     font-weight: bold;
     border: 1px solid darkgrey;
 }
+
 footer section.pages.container article.page-element.current-page {
-    cursor:not-allowed;
+    cursor: not-allowed;
 }
 
-button.edit{
+button.maxi-card-item {
+    align-items: center;
+    background-color: #FFFFFF;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: .25rem;
+    box-shadow: rgba(0, 0, 0, 0.02) 0 1px 3px 0;
+    box-sizing: border-box;
+    color: rgba(114, 114, 114, 0.85);
+    cursor: pointer;
+    display: inline-flex;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    justify-content: center;
+    line-height: 1;
+    margin: 0;
+    /* min-height: 3rem; */
+    height: 30px;
+    /* padding: calc(.875rem - 1px) calc(1.5rem - 1px); */
+    padding: 5px;
+    /* position: relative; */
+    text-decoration: none;
+    transition: all 50ms;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    vertical-align: baseline;
     width: 100px;
-    border: 1px solid darkgrey;
-    border: 1px solid rgb(142, 134, 135);
+
+    /* border-color: rgba(0, 0, 0, 0.15);
+    box-shadow: rgba(0, 0, 0, 0.1) 0 4px 12px;
+    color: rgba(0, 0, 0, 0.65); */
 }
 
+button.maxi-card-item:hover,
+button.maxi-card-item:focus {
+    border-color: rgba(0, 0, 0, 0.15);
+    box-shadow: rgba(0, 0, 0, 0.1) 0 4px 12px;
+    color: rgba(0, 0, 0, 0.65);
+}
 
+button.maxi-card-item:hover {
+    transform: translateY(-1px);
+}
+
+button.maxi-card-item:active {
+    background-color: #F0F0F1;
+    border-color: rgba(0, 0, 0, 0.15);
+    box-shadow: rgba(0, 0, 0, 0.06) 0 2px 4px;
+    color: rgba(0, 0, 0, 0.65);
+    transform: translateY(0);
+}

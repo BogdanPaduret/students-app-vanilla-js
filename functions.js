@@ -1,10 +1,5 @@
 // page init
 function init(cardsPerPage, index) {
-    let totalCards = data.length;
-    console.log("There are " + totalCards + " total cards");
-    let nrPages = Math.ceil(totalCards / cardsPerPage);
-    console.log("At " + cardsPerPage + " there are " + nrPages + " pages");
-
     cardsContainer.textContent = "";
     pagesContainer.textContent = "";
 
@@ -18,7 +13,6 @@ function createPages(cardsPerPage, start) {
     let nrPages = Math.ceil(totalCards / cardsPerPage);
     console.log("At " + cardsPerPage + " there are " + nrPages + " pages");
     for (let i = 0; i < nrPages; i++) {
-        console.log("yey" + i);
         generatePage(i + 1, Math.round(start / cardsPerPage));
     }
     loadCards(data, start, cardsPerPage);
@@ -29,10 +23,10 @@ function generatePage(pageNumber, currentPage) {
 
     article.classList.add("page-element", "box", "page-" + pageNumber);
     page.classList.add("page-element", "page-number", "page-" + pageNumber);
-    console.log(page);
-    console.log(currentPage + 1);
+
     if (pageNumber == currentPage + 1) {
         article.classList.add("current-page");
+        page.classList.add("current-page");
     }
 
     page.textContent = pageNumber;
@@ -40,8 +34,7 @@ function generatePage(pageNumber, currentPage) {
     article.appendChild(page);
     pagesContainer.appendChild(article);
 
-    console.log("Generated page:");
-    console.log(article);
+    console.log("Generated button for page: " + pageNumber);
 }
 
 // card loading
@@ -124,9 +117,9 @@ function generateCardElements(item) {
     name.classList = commonClasses;
     name.classList.add("name");
 
-    // if ((item.name.first + " " + item.name.last).length >= 15) {
-    //     name.classList.add("double-line");
-    // }
+    if ((item.name.first + " " + item.name.last).length >= 15) {
+        name.classList.add("double-line");
+    }
 
     // -- email
     email.textContent = item.email;
@@ -159,9 +152,8 @@ function maximizeCard(card) {
     let cardInfo = data[index];
     generateMaxiCard(cardInfo, index);
 }
-function generateMaxiCard(cardInfo, index) {
+function buildMaxiCard(cardInfo, index) {
     let card = generateMaximizedElements(cardInfo);
-    console.log(card);
 
     card.article.appendChild(card.upperContainer);
     card.article.appendChild(card.leftContainer);
@@ -189,10 +181,15 @@ function generateMaxiCard(cardInfo, index) {
 
     card.lowerContainer.appendChild(card.editButton);
 
-    maximizedWindow.appendChild(card.article);
-
-    styleMaxiWindow(maximizedWindow);
     styleMaxiCard(card);
+
+    return card.article;
+}
+function generateMaxiCard(cardInfo, index) {
+    let cardArticle = buildMaxiCard(cardInfo, index);
+
+    maximizedWindow.appendChild(cardArticle);
+    styleMaxiWindow(maximizedWindow);
 }
 function getCard(element) {
     let classes = element.classList;
@@ -339,6 +336,7 @@ function generateArrow(arrowDirection) {
     }
     return arrow;
 }
+// do noting currently
 function goToLeft(card) {}
 function goToRight(card) {}
 
@@ -382,10 +380,6 @@ function styleMaxiArticle(cardArticle) {
     style.boxShadow = "rgba(99, 99, 99, 0.2) 0px 2px 8px 0px";
     style.borderRadius = "5px";
     style.backgroundColor = "white";
-
-    // style.display = "flex";
-    // style.flexDirection = "column";
-    // style.justifyContent = "flex-start";
 
     style.display = "grid";
     style.gridTemplateColumns = "50px 270px 50px";
@@ -493,10 +487,89 @@ function styleMaxiJoinDate(joinDate) {
 
     s.margin = "0px 0px 5px 0px";
 }
+// does nothing currently since the edit button is styled through CSS
+function styleEditButton(editButton) {}
 
-// TO DO!
-function styleEditButton(button) {
-    let style = button.style;
+// edit maxi card
+function editMaxiCard(cardInfo, cardIndex) {
+    buildEditCard(cardInfo, cardIndex);
+}
+function saveMaxiCard(cardInfo, cardIndex) {}
+function buildEditCard(cardInfo, index) {
+    let inputCard = generateInputElements(cardInfo, index);
+    maximizedWindow.textContent = "";
+    maximizedWindow.appendChild(inputCard);
+
+    maximizedWindow.addEventListener("click", (e) => {
+        let element = e.target;
+        let classes = element.classList;
+        let card = getMaxiCard(element);
+        if (element.tagName == "BUTTON") {
+            console.log("BUTTON PRESSED!");
+        }
+    });
+}
+function generateInputElements(cardInfo, index) {
+    let card = buildMaxiCard(cardInfo, index);
+    let mainContainer = card.querySelector(".main-container");
+
+    let leftContainer = card.querySelector(".left-container");
+    let rightContainer = card.querySelector(".right-container");
+
+    // card.style.gridTemplateAreas = '"up up up" "ma ma ma" "lo lo lo"';
+
+    // card.removeChild(leftContainer);
+    // card.removeChild(rightContainer);
+
+    leftContainer.style.visibility = "hidden";
+    rightContainer.style.visibility = "hidden";
+
+    let mcName = mainContainer.querySelector(".name");
+    let mcEmail = mainContainer.querySelector(".email");
+
+    let name = document.createElement("input");
+    name.classList = mcName.classList;
+    name.type = "text";
+    name.value = mcName.textContent;
+    name.style.fontSize = "20px";
+    name.style.fontWeight = "bold";
+    name.style.fontStyle = "italic";
+    name.style.width = "120%";
+    name.style.height = "37px";
+    name.style.margin = "2.5px 0px";
+    name.style.border = "0px";
+    name.style.borderBottom = "2px solid rgb(128, 128, 128)";
+    name.style.borderBottomLeftRadius = "5px";
+    name.style.borderBottomRightRadius = "5px";
+    name.style.outline = "none";
+    name.style.textAlign = "center";
+
+    let email = document.createElement("input");
+    email.classList = mcEmail.classList;
+    email.type = "text";
+    email.value = mcEmail.textContent;
+    email.style.fontSize = "14px";
+    email.style.fontWeight = "normal";
+    email.style.fontStyle = "italic";
+    email.style.height = "18px";
+    email.style.width = "120%";
+    email.style.margin = "2.5px 0px 0px 0px";
+    email.style.border = "0px";
+    email.style.borderBottom = "2px solid rgb(128, 128, 128)";
+    email.style.borderBottomLeftRadius = "5px";
+    email.style.borderBottomRightRadius = "5px";
+    email.style.outline = "none";
+    email.style.textAlign = "center";
+
+    let button = card.querySelector(".lower-container").querySelector(".edit");
+
+    button.classList.replace("edit", "save");
+    button.textContent = "Save Modifications";
+
+    mainContainer.replaceChild(name, mcName);
+    mainContainer.replaceChild(email, mcEmail);
+
+    return card;
 }
 
 // helpers

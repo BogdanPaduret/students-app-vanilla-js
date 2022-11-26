@@ -4,7 +4,7 @@ let cardsContainer = document.querySelector(
 let maximizedWindow = document.querySelector("main section.maximized");
 let pagesContainer = document.querySelector("footer section.pages.container");
 
-let cardsPerPage = 6;
+let cardsPerPage = 5;
 
 init(cardsPerPage, 0);
 
@@ -30,23 +30,40 @@ maximizedWindow.addEventListener("click", (e) => {
     let element = e.target;
     let classes = element.classList;
     // console.log(classes);
+    let card = getMaxiCard(element);
+
     if (classes.contains("close")) {
         maximizedWindow.textContent = "";
         maximizedWindow.removeAttribute("style");
-    } else if (classes.contains("arrow")) {
-        let card = getMaxiCard(element);
+    } else if (card != null) {
+        console.log("CARD NOT NULL!");
+
         let cardItems = card.children[2].children;
         let email = cardItems[2].textContent;
         let cardIndex = retrieveCardIndex(email, 0);
 
-        if (classes.contains("left") && cardIndex > 0) {
-            maximizedWindow.textContent = "";
-            let cardInfo = data[cardIndex - 1];
-            generateMaxiCard(cardInfo, cardIndex - 1);
-        } else if (classes.contains("right")) {
-            maximizedWindow.textContent = "";
-            let cardInfo = data[cardIndex + 1];
-            generateMaxiCard(cardInfo, cardIndex + 1);
+        if (cardIndex != null) {
+            console.log("CARD INDEX NOT NULL!!");
+
+            if (classes.contains("arrow")) {
+                if (classes.contains("left") && cardIndex > 0) {
+                    maximizedWindow.textContent = "";
+                    let cardInfo = data[cardIndex - 1];
+                    generateMaxiCard(cardInfo, cardIndex - 1);
+                } else if (classes.contains("right")) {
+                    maximizedWindow.textContent = "";
+                    let cardInfo = data[cardIndex + 1];
+                    generateMaxiCard(cardInfo, cardIndex + 1);
+                }
+            } else if (element.tagName == "BUTTON") {
+                console.log("BUTTON!");
+                if (classes.contains("edit")) {
+                    let cardInfo = data[cardIndex];
+                    editMaxiCard(cardInfo, cardIndex);
+                } else if (classes.contains("save")) {
+                    console.log("should save these modifications somewhere");
+                }
+            }
         }
     }
 });
