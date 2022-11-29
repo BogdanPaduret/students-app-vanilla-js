@@ -33,8 +33,7 @@ maximizedWindow.addEventListener("click", (e) => {
     let card = getMaxiCard(element);
 
     if (classes.contains("close")) {
-        maximizedWindow.textContent = "";
-        maximizedWindow.removeAttribute("style");
+        closeMaxiCard();
     } else if (card != null) {
         console.log("CARD NOT NULL!");
 
@@ -47,13 +46,9 @@ maximizedWindow.addEventListener("click", (e) => {
 
             if (classes.contains("arrow")) {
                 if (classes.contains("left") && cardIndex > 0) {
-                    maximizedWindow.textContent = "";
-                    let cardInfo = data[cardIndex - 1];
-                    generateMaxiCard(cardInfo, cardIndex - 1);
+                    goToLeft(cardIndex);
                 } else if (classes.contains("right")) {
-                    maximizedWindow.textContent = "";
-                    let cardInfo = data[cardIndex + 1];
-                    generateMaxiCard(cardInfo, cardIndex + 1);
+                    goToRight(cardIndex);
                 }
             } else if (element.tagName == "BUTTON") {
                 console.log("BUTTON!");
@@ -77,6 +72,37 @@ pagesContainer.addEventListener("click", (e) => {
             let pageNumber = classes.item(2).split("-")[1];
             let index = (pageNumber - 1) * cardsPerPage;
             init(cardsPerPage, index);
+        }
+    }
+});
+
+// key presses
+document.addEventListener("keydown", (e) => {
+    if (
+        maximizedWindow.textContent != "" &&
+        maximizedWindow.textContent.length > 22
+    ) {
+        let card = maximizedWindow.querySelector("article.maxi-card");
+
+        let cardItems = card.children[2].children;
+        let email = cardItems[2].textContent;
+        let cardIndex = retrieveCardIndex(email, 0);
+
+        if (e.key == "Escape") {
+            // alert("ESCAPE" + maximizedWindow.textContent.length);
+            closeMaxiCard();
+        } else if (e.key == "ArrowLeft") {
+            goToLeft(cardIndex);
+        } else if (e.key == "ArrowRight") {
+            goToRight(cardIndex);
+        } else if (e.key == "Enter") {
+            console.log("EDIT PROFILE!");
+        }
+    } else {
+        if (e.key == "ArrowLeft") {
+            console.log("TO PREVIOUS PAGE");
+        } else if (e.key == "ArrowRight") {
+            console.log("TO NEXT PAGE");
         }
     }
 });

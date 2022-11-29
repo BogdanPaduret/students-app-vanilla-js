@@ -1,9 +1,29 @@
-// page init
+// app calls
 function init(cardsPerPage, index) {
     cardsContainer.textContent = "";
     pagesContainer.textContent = "";
 
     createPages(cardsPerPage, index);
+}
+function closeMaxiCard() {
+    maximizedWindow.textContent = "";
+    maximizedWindow.removeAttribute("style");
+}
+function goToLeft(cardIndex) {
+    let prevIndex = cardIndex - 1;
+    if (prevIndex >= 0) {
+        maximizedWindow.textContent = "";
+        let cardInfo = data[cardIndex - 1];
+        generateMaxiCard(cardInfo, cardIndex - 1);
+    }
+}
+function goToRight(cardIndex) {
+    let nextIndex = cardIndex + 1;
+    if (nextIndex < data.length) {
+        maximizedWindow.textContent = "";
+        let cardInfo = data[nextIndex];
+        generateMaxiCard(cardInfo, nextIndex);
+    }
 }
 
 // page creation
@@ -111,6 +131,7 @@ function generateCardElements(item) {
     portrait.classList.add("portrait");
     portrait.src = item.picture.thumbnail;
     portrait.alt = "thumbnail-" + item.name.first + "-" + item.name.last;
+    portrait.style.webkitUserDrag = "none";
 
     // -- name
     name.textContent = item.name.first + " " + item.name.last;
@@ -182,6 +203,8 @@ function buildMaxiCard(cardInfo, index) {
     card.lowerContainer.appendChild(card.editButton);
 
     styleMaxiCard(card);
+
+    card.article.draggable = "true";
 
     return card.article;
 }
@@ -330,15 +353,13 @@ function generateArrow(arrowDirection) {
     let arrow = document.createElement("img");
     arrow.src = "/pictures/arrow.png";
     arrow.style.height = "50px";
+    arrow.style.webkitUserDrag = "none";
 
     if (arrowDirection < 0) {
         arrow.style.transform = "scaleX(-1)";
     }
     return arrow;
 }
-// do noting currently
-function goToLeft(card) {}
-function goToRight(card) {}
 
 // stylize maxi card functions
 function styleMaxiWindow(window) {
@@ -447,6 +468,7 @@ function styleMaxiClose(item) {
     style.width = "20px";
     style.height = "20px";
     style.margin = "0px";
+    style.webkitUserDrag = "none";
 
     // style.alignSelf = "flex-start";
 }
@@ -458,6 +480,7 @@ function styleMaxiPortrait(portrait) {
     s.objectFit = "cover";
     s.borderRadius = "50%";
     s.margin = "00px 0px 10px 0px";
+    s.webkitUserDrag = "none";
 }
 function styleMaxiName(name) {
     let s = name.style;
