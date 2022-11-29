@@ -1,14 +1,29 @@
-// page init
+// app calls
 function init(cardsPerPage, index) {
-    let totalCards = data.length;
-    console.log("There are " + totalCards + " total cards");
-    let nrPages = Math.ceil(totalCards / cardsPerPage);
-    console.log("At " + cardsPerPage + " there are " + nrPages + " pages");
-
     cardsContainer.textContent = "";
     pagesContainer.textContent = "";
 
     createPages(cardsPerPage, index);
+}
+function closeMaxiCard() {
+    maximizedWindow.textContent = "";
+    maximizedWindow.removeAttribute("style");
+}
+function goToLeft(cardIndex) {
+    let prevIndex = cardIndex - 1;
+    if (prevIndex >= 0) {
+        maximizedWindow.textContent = "";
+        let cardInfo = data[cardIndex - 1];
+        generateMaxiCard(cardInfo, cardIndex - 1);
+    }
+}
+function goToRight(cardIndex) {
+    let nextIndex = cardIndex + 1;
+    if (nextIndex < data.length) {
+        maximizedWindow.textContent = "";
+        let cardInfo = data[nextIndex];
+        generateMaxiCard(cardInfo, nextIndex);
+    }
 }
 
 // page creation
@@ -18,7 +33,6 @@ function createPages(cardsPerPage, start) {
     let nrPages = Math.ceil(totalCards / cardsPerPage);
     console.log("At " + cardsPerPage + " there are " + nrPages + " pages");
     for (let i = 0; i < nrPages; i++) {
-        console.log("yey" + i);
         generatePage(i + 1, Math.round(start / cardsPerPage));
     }
     loadCards(data, start, cardsPerPage);
@@ -29,10 +43,10 @@ function generatePage(pageNumber, currentPage) {
 
     article.classList.add("page-element", "box", "page-" + pageNumber);
     page.classList.add("page-element", "page-number", "page-" + pageNumber);
-    console.log(page);
-    console.log(currentPage + 1);
+
     if (pageNumber == currentPage + 1) {
         article.classList.add("current-page");
+        page.classList.add("current-page");
     }
 
     page.textContent = pageNumber;
@@ -40,8 +54,7 @@ function generatePage(pageNumber, currentPage) {
     article.appendChild(page);
     pagesContainer.appendChild(article);
 
-    console.log("Generated page:");
-    console.log(article);
+    console.log("Generated button for page: " + pageNumber);
 }
 
 // card loading
@@ -118,6 +131,7 @@ function generateCardElements(item) {
     portrait.classList.add("portrait");
     portrait.src = item.picture.thumbnail;
     portrait.alt = "thumbnail-" + item.name.first + "-" + item.name.last;
+    portrait.style.webkitUserDrag = "none";
 
     // -- name
     name.textContent = item.name.first + " " + item.name.last;
@@ -159,31 +173,46 @@ function maximizeCard(card) {
     let cardInfo = data[index];
     generateMaxiCard(cardInfo, index);
 }
-function generateMaxiCard(cardInfo, index) {
+function buildMaxiCard(cardInfo, index) {
     let card = generateMaximizedElements(cardInfo);
-    console.log(card);
 
-    card.article.appendChild(card.closeButton);
-    card.article.appendChild(card.portrait);
-    card.article.appendChild(card.name);
-    card.article.appendChild(card.email);
-    card.article.appendChild(card.horizontalLine);
-    card.article.appendChild(card.joinDate);
-    card.article.appendChild(card.age);
+    card.article.appendChild(card.upperContainer);
+    card.article.appendChild(card.leftContainer);
+    card.article.appendChild(card.mainContainer);
+    card.article.appendChild(card.rightContainer);
+    card.article.appendChild(card.lowerContainer);
+
+    card.upperContainer.appendChild(card.closeButton);
+
+    card.mainContainer.appendChild(card.portrait);
+    card.mainContainer.appendChild(card.name);
+    card.mainContainer.appendChild(card.email);
+    card.mainContainer.appendChild(card.horizontalLine);
+    card.mainContainer.appendChild(card.joinDate);
+    card.mainContainer.appendChild(card.age);
 
     if (index != 0) {
-        card.article.appendChild(card.leftArrow);
+        card.leftContainer.appendChild(card.leftArrow);
+    } else {
+        card.rightArrow.style.bottom = "150px";
     }
     if (index != data.length - 1) {
-        card.article.appendChild(card.rightArrow);
+        card.rightContainer.appendChild(card.rightArrow);
     }
 
-    maximizedWindow.appendChild(card.article);
+    card.lowerContainer.appendChild(card.editButton);
 
-    stylizeMaxiWindow(maximizedWindow);
+    styleMaxiCard(card);
 
-    // stylizeMaxiCard(card.article);
-    // stylizeMaxiClose(card.closeButton);
+    card.article.draggable = "true";
+
+    return card.article;
+}
+function generateMaxiCard(cardInfo, index) {
+    let cardArticle = buildMaxiCard(cardInfo, index);
+
+    maximizedWindow.appendChild(cardArticle);
+    styleMaxiWindow(maximizedWindow);
 }
 function getCard(element) {
     let classes = element.classList;
@@ -198,6 +227,16 @@ function getCard(element) {
         return null;
     }
 }
+function getMaxiCard(element) {
+    while (!element.classList.contains("maximized")) {
+        let classes = element.classList;
+        if (classes.contains("maxi-card")) {
+            return element;
+        }
+        element = element.parentNode;
+    }
+    return null;
+}
 function generateMaximizedElements(item) {
     let thumbnailCardElements = generateCardElements(item);
 
@@ -207,16 +246,27 @@ function generateMaximizedElements(item) {
     let email = thumbnailCardElements.email;
     let horizontalLine = thumbnailCardElements.horizontalLine;
     let joinDate = thumbnailCardElements.joinDate;
+
     let age = document.createElement("p");
+
     let closeButton = document.createElement("img");
+    let editButton = document.createElement("button");
 
     let leftArrow = generateArrow(-1);
     let rightArrow = generateArrow(1);
+
+    // containers
+    let mainContainer = document.createElement("div");
+    let upperContainer = document.createElement("div");
+    let lowerContainer = document.createElement("div");
+    let leftContainer = document.createElement("div");
+    let rightContainer = document.createElement("div");
 
     // populate elements
     portrait.src = item.picture.large;
     age.textContent = "Account age: " + item.registered.age + " years";
     closeButton.src = "pictures/close.png";
+    editButton.textContent = "Edit profile";
 
     // classes refactor for normal card items
     let elements = { portrait, name, email, horizontalLine, joinDate };
@@ -233,6 +283,12 @@ function generateMaximizedElements(item) {
         closeButton,
         leftArrow,
         rightArrow,
+        editButton,
+        mainContainer,
+        upperContainer,
+        lowerContainer,
+        leftContainer,
+        rightContainer,
     });
 
     // class refactor for article class
@@ -254,6 +310,24 @@ function generateMaximizedElements(item) {
 
     rightArrow.classList = commonClasses;
     rightArrow.classList.add("arrow", "right");
+
+    editButton.classList = commonClasses;
+    editButton.classList.add("edit");
+
+    mainContainer.classList = commonClasses;
+    mainContainer.classList.add("main-container");
+
+    upperContainer.classList = commonClasses;
+    upperContainer.classList.add("upper-container");
+
+    lowerContainer.classList = commonClasses;
+    lowerContainer.classList.add("lower-container");
+
+    leftContainer.classList = commonClasses;
+    leftContainer.classList.add("left-container");
+
+    rightContainer.classList = commonClasses;
+    rightContainer.classList.add("right-container");
 
     // return
     return elements;
@@ -279,23 +353,16 @@ function generateArrow(arrowDirection) {
     let arrow = document.createElement("img");
     arrow.src = "/pictures/arrow.png";
     arrow.style.height = "50px";
-    arrow.style.position = "relative";
+    arrow.style.webkitUserDrag = "none";
 
     if (arrowDirection < 0) {
         arrow.style.transform = "scaleX(-1)";
-        arrow.style.right = "160px";
-        arrow.style.bottom = "150px";
-    } else {
-        arrow.style.left = "160px";
-        arrow.style.bottom = "200px";
     }
     return arrow;
 }
-function goToLeft(card) {}
-function goToRight(card) {}
 
 // stylize maxi card functions
-function stylizeMaxiWindow(window) {
+function styleMaxiWindow(window) {
     let style = window.style;
 
     style.position = "fixed";
@@ -312,26 +379,220 @@ function stylizeMaxiWindow(window) {
     style.justifyItems = "center";
     style.gap = "30px";
 }
-function stylizeMaxiCard(card) {
-    let style = card.style;
+function styleMaxiCard(card) {
+    styleMaxiArticle(card.article);
+    styleMaxiContainers(card);
+
+    styleMaxiClose(card.closeButton);
+    styleMaxiPortrait(card.portrait);
+    styleMaxiName(card.name);
+    styleMaxiEmail(card.email);
+    styleMaxiHorizontalLine(card.horizontalLine);
+    styleMaxiJoinDate(card.joinDate);
+
+    styleEditButton(card.editButton);
+}
+
+function styleMaxiArticle(cardArticle) {
+    let style = cardArticle.style;
 
     style.width = "400px";
     style.height = "400px";
     style.boxShadow = "rgba(99, 99, 99, 0.2) 0px 2px 8px 0px";
     style.borderRadius = "5px";
     style.backgroundColor = "white";
-    style.display = "flex";
+
+    style.display = "grid";
+    style.gridTemplateColumns = "50px 270px 50px";
+    style.gridTemplateRows = "20px 320px 30px";
+
+    style.gridTemplateAreas = '"up up up" "le ma ri" "lo lo lo"';
+
     style.gap = "0px";
-    style.flexDirection = "column";
-    style.justifyContent = "flex-start";
     style.alignContent = "center";
     style.justifyItems = "center";
     style.alignItems = "center";
     style.padding = "15px";
     style.borderTopRightRadius = "25px";
 }
-function stylizeMaxiClose(item) {
+function styleMaxiContainers(card) {
+    let main = card.mainContainer.style;
+    let upper = card.upperContainer.style;
+    let lower = card.lowerContainer.style;
+    let left = card.leftContainer.style;
+    let right = card.rightContainer.style;
+
+    main.gridArea = "ma";
+    upper.gridArea = "up";
+    lower.gridArea = "lo";
+    left.gridArea = "le";
+    right.gridArea = "ri";
+
+    main.width = "100%";
+    main.height = "100%";
+    main.display = "flex";
+    main.flexDirection = "column";
+    main.justifyContent = "flex-start";
+    main.alignContent = "center";
+    main.justifyItems = "center";
+    main.alignItems = "center";
+
+    upper.width = "100%";
+    upper.height = "100%";
+    upper.display = "flex";
+    upper.flexDirection = "row-reverse";
+
+    left.height = "100%";
+    left.display = "flex";
+    left.flexDirection = "column";
+    left.alignContent = "center";
+    left.justifyContent = "center";
+
+    right.height = "100%";
+    right.display = "flex";
+    right.flexDirection = "column";
+    right.alignContent = "center";
+    right.justifyContent = "center";
+
+    lower.width = "100%";
+    lower.height = "100%";
+    lower.display = "flex";
+    lower.flexDirection = "row";
+    lower.alignContent = "center";
+    lower.justifyContent = "center";
+}
+
+function styleMaxiClose(item) {
     let style = item.style;
+
+    style.width = "20px";
+    style.height = "20px";
+    style.margin = "0px";
+    style.webkitUserDrag = "none";
+
+    // style.alignSelf = "flex-start";
+}
+function styleMaxiPortrait(portrait) {
+    let s = portrait.style;
+
+    s.width = "150px";
+    s.height = "150px";
+    s.objectFit = "cover";
+    s.borderRadius = "50%";
+    s.margin = "00px 0px 10px 0px";
+    s.webkitUserDrag = "none";
+}
+function styleMaxiName(name) {
+    let s = name.style;
+
+    if (name.textContent.length < 15) {
+        s.fontSize = "32px";
+        s.margin = "2.5px 0px";
+    } else {
+        s.fontSize = "28px";
+        s.margin = "5px 0px";
+    }
+}
+function styleMaxiEmail(email) {
+    let s = email.style;
+
+    s.margin = "2.5px 0px 0px 0px";
+}
+function styleMaxiHorizontalLine(horizontalLine) {
+    let s = horizontalLine.style;
+
+    s.width = "100%";
+    s.height = "0px";
+    s.margin = "20px 0px";
+}
+function styleMaxiJoinDate(joinDate) {
+    let s = joinDate.style;
+
+    s.margin = "0px 0px 5px 0px";
+}
+// does nothing currently since the edit button is styled through CSS
+function styleEditButton(editButton) {}
+
+// edit maxi card
+function editMaxiCard(cardInfo, cardIndex) {
+    buildEditCard(cardInfo, cardIndex);
+}
+function saveMaxiCard(cardInfo, cardIndex) {}
+function buildEditCard(cardInfo, index) {
+    let inputCard = generateInputElements(cardInfo, index);
+    maximizedWindow.textContent = "";
+    maximizedWindow.appendChild(inputCard);
+
+    maximizedWindow.addEventListener("click", (e) => {
+        let element = e.target;
+        let classes = element.classList;
+        let card = getMaxiCard(element);
+        if (element.tagName == "BUTTON") {
+            console.log("BUTTON PRESSED!");
+        }
+    });
+}
+function generateInputElements(cardInfo, index) {
+    let card = buildMaxiCard(cardInfo, index);
+    let mainContainer = card.querySelector(".main-container");
+
+    let leftContainer = card.querySelector(".left-container");
+    let rightContainer = card.querySelector(".right-container");
+
+    // card.style.gridTemplateAreas = '"up up up" "ma ma ma" "lo lo lo"';
+
+    // card.removeChild(leftContainer);
+    // card.removeChild(rightContainer);
+
+    leftContainer.style.visibility = "hidden";
+    rightContainer.style.visibility = "hidden";
+
+    let mcName = mainContainer.querySelector(".name");
+    let mcEmail = mainContainer.querySelector(".email");
+
+    let name = document.createElement("input");
+    name.classList = mcName.classList;
+    name.type = "text";
+    name.value = mcName.textContent;
+    name.style.fontSize = "20px";
+    name.style.fontWeight = "bold";
+    name.style.fontStyle = "italic";
+    name.style.width = "120%";
+    name.style.height = "37px";
+    name.style.margin = "2.5px 0px";
+    name.style.border = "0px";
+    name.style.borderBottom = "2px solid rgb(128, 128, 128)";
+    name.style.borderBottomLeftRadius = "5px";
+    name.style.borderBottomRightRadius = "5px";
+    name.style.outline = "none";
+    name.style.textAlign = "center";
+
+    let email = document.createElement("input");
+    email.classList = mcEmail.classList;
+    email.type = "text";
+    email.value = mcEmail.textContent;
+    email.style.fontSize = "14px";
+    email.style.fontWeight = "normal";
+    email.style.fontStyle = "italic";
+    email.style.height = "18px";
+    email.style.width = "120%";
+    email.style.margin = "2.5px 0px 0px 0px";
+    email.style.border = "0px";
+    email.style.borderBottom = "2px solid rgb(128, 128, 128)";
+    email.style.borderBottomLeftRadius = "5px";
+    email.style.borderBottomRightRadius = "5px";
+    email.style.outline = "none";
+    email.style.textAlign = "center";
+
+    let button = card.querySelector(".lower-container").querySelector(".edit");
+
+    button.classList.replace("edit", "save");
+    button.textContent = "Save Modifications";
+
+    mainContainer.replaceChild(name, mcName);
+    mainContainer.replaceChild(email, mcEmail);
+
+    return card;
 }
 
 // helpers
