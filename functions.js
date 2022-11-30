@@ -1,9 +1,9 @@
 // app calls
-function init(cardsPerPage, index) {
+function init(cardsPerPage, cardIndex) {
     cardsContainer.textContent = "";
     pagesContainer.textContent = "";
 
-    createPages(cardsPerPage, index);
+    createPages(cardsPerPage, cardIndex);
 }
 function closeMaxiCard() {
     maximizedWindow.textContent = "";
@@ -19,7 +19,7 @@ function goToLeft(cardIndex) {
 }
 function goToRight(cardIndex) {
     let nextIndex = cardIndex + 1;
-    if (nextIndex < data.length) {
+    if (nextIndex < totalCards) {
         maximizedWindow.textContent = "";
         let cardInfo = data[nextIndex];
         generateMaxiCard(cardInfo, nextIndex);
@@ -27,15 +27,20 @@ function goToRight(cardIndex) {
 }
 
 // page creation
-function createPages(cardsPerPage, start) {
-    let totalCards = data.length;
+function createPages(cardsPerPage, cardIndex) {
     console.log("There are " + totalCards + " total cards");
-    let nrPages = Math.ceil(totalCards / cardsPerPage);
-    console.log("At " + cardsPerPage + " there are " + nrPages + " pages");
-    for (let i = 0; i < nrPages; i++) {
-        generatePage(i + 1, Math.round(start / cardsPerPage));
+    console.log(
+        "At " +
+            cardsPerPage +
+            " cards per page there are " +
+            totalPages +
+            " pages"
+    );
+    for (let i = 0; i < totalPages; i++) {
+        generatePage(i + 1, Math.round(cardIndex / cardsPerPage));
     }
-    loadCards(data, start, cardsPerPage);
+    // console.log(cardIndex);
+    loadCards(data, cardIndex, cardsPerPage);
 }
 function generatePage(pageNumber, currentPage) {
     let article = document.createElement("article");
@@ -56,6 +61,10 @@ function generatePage(pageNumber, currentPage) {
 
     console.log("Generated button for page: " + pageNumber);
 }
+function changePage(pageNumber) {
+    let cardIndex = (pageNumber - 1) * cardsPerPage;
+    init(cardsPerPage, cardIndex);
+}
 
 // card loading
 function loadCards(arr, start, amount) {
@@ -72,7 +81,7 @@ function loadCards(arr, start, amount) {
 
     console.log("Starting index: " + lowerLimit);
 
-    if (amount <= 0 || amount > lowerLimit + arr.length) {
+    if (amount <= 0 || amount > arr.length - lowerLimit) {
         upperLimit = arr.length;
     } else {
         upperLimit = amount + lowerLimit;
@@ -196,7 +205,7 @@ function buildMaxiCard(cardInfo, index) {
     } else {
         card.rightArrow.style.bottom = "150px";
     }
-    if (index != data.length - 1) {
+    if (index != totalCards - 1) {
         card.rightContainer.appendChild(card.rightArrow);
     }
 
@@ -342,7 +351,7 @@ function retrieveCardInfo(email, offset) {
     }
 }
 function retrieveCardIndex(email, offset) {
-    for (let i = 0; i < data.length; i++) {
+    for (let i = 0; i < totalCards; i++) {
         if (data[i].email == email) {
             return i + offset;
         }

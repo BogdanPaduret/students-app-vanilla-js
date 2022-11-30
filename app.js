@@ -5,6 +5,8 @@ let maximizedWindow = document.querySelector("main section.maximized");
 let pagesContainer = document.querySelector("footer section.pages.container");
 
 let cardsPerPage = 5;
+let totalCards = data.length;
+let totalPages = Math.ceil(totalCards / cardsPerPage);
 
 init(cardsPerPage, 0);
 
@@ -65,15 +67,14 @@ maximizedWindow.addEventListener("click", (e) => {
 
 pagesContainer.addEventListener("click", (e) => {
     let element = e.target;
-    let classes = element.classList;
-    if (classes.contains("page-element")) {
-        if (!classes.contains("current-page")) {
-            console.log("Page change!");
-            let pageNumber = classes.item(2).split("-")[1];
-            let index = (pageNumber - 1) * cardsPerPage;
-            init(cardsPerPage, index);
-        }
+    if (element.classList.contains("page-number")) {
+        selectedPage = parseInt(element.textContent);
+    } else {
+        selectedPage = parseInt(
+            element.querySelector(".page-number").textContent
+        );
     }
+    changePage(selectedPage);
 });
 
 // key presses
@@ -89,7 +90,6 @@ document.addEventListener("keydown", (e) => {
         let cardIndex = retrieveCardIndex(email, 0);
 
         if (e.key == "Escape") {
-            // alert("ESCAPE" + maximizedWindow.textContent.length);
             closeMaxiCard();
         } else if (e.key == "ArrowLeft") {
             goToLeft(cardIndex);
@@ -99,10 +99,16 @@ document.addEventListener("keydown", (e) => {
             console.log("EDIT PROFILE!");
         }
     } else {
-        if (e.key == "ArrowLeft") {
+        let currentPageIndex = parseInt(
+            document.querySelector(".current-page.page-number").textContent
+        );
+
+        if (e.key == "ArrowLeft" && currentPageIndex > 1) {
             console.log("TO PREVIOUS PAGE");
-        } else if (e.key == "ArrowRight") {
+            changePage(currentPageIndex - 1);
+        } else if (e.key == "ArrowRight" && currentPageIndex < totalPages) {
             console.log("TO NEXT PAGE");
+            changePage(currentPageIndex + 1);
         }
     }
 });
