@@ -3,6 +3,11 @@ function init(cardsPerPage, cardIndex) {
     cardsContainer.textContent = "";
     pagesContainer.textContent = "";
 
+    totalCards = data.length;
+    totalPages = Math.ceil(totalCards / cardsPerPage);
+
+    console.log(cardsPerPage);
+
     createPages(cardsPerPage, cardIndex);
 }
 function closeMaxiCard() {
@@ -525,21 +530,16 @@ function styleEditButton(editButton) {}
 // edit maxi card
 function editMaxiCard(cardInfo, cardIndex) {
     buildEditCard(cardInfo, cardIndex);
+    let card = maximizedWindow.querySelector("article.maxi-card");
+    console.log(card.classList);
+    card.classList.replace("maxi-card", "edit-card");
+    console.log(card.classList);
 }
 function saveMaxiCard(cardInfo, cardIndex) {}
 function buildEditCard(cardInfo, index) {
     let inputCard = generateInputElements(cardInfo, index);
     maximizedWindow.textContent = "";
     maximizedWindow.appendChild(inputCard);
-
-    maximizedWindow.addEventListener("click", (e) => {
-        let element = e.target;
-        let classes = element.classList;
-        let card = getMaxiCard(element);
-        if (element.tagName == "BUTTON") {
-            console.log("BUTTON PRESSED!");
-        }
-    });
 }
 function generateInputElements(cardInfo, index) {
     let card = buildMaxiCard(cardInfo, index);
