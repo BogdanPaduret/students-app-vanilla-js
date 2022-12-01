@@ -175,7 +175,8 @@ footer section.pages.container article.page-element.current-page {
     cursor: not-allowed;
 }
 
-button.maxi-card-item {
+button.maxi-card-item,
+button.add-card {
     align-items: center;
     background-color: #FFFFFF;
     border: 1px solid rgba(0, 0, 0, 0.1);
@@ -210,20 +211,34 @@ button.maxi-card-item {
 }
 
 button.maxi-card-item:hover,
-button.maxi-card-item:focus {
+button.maxi-card-item:focus,
+button.add-card:hover,
+button.add-card:focus {
     border-color: rgba(0, 0, 0, 0.15);
     box-shadow: rgba(0, 0, 0, 0.1) 0 4px 12px;
     color: rgba(0, 0, 0, 0.65);
 }
 
-button.maxi-card-item:hover {
+button.maxi-card-item:hover,
+button.add-card:hover {
     transform: translateY(-1px);
 }
 
-button.maxi-card-item:active {
+button.maxi-card-item:active,
+button.add-card:active {
     background-color: #F0F0F1;
     border-color: rgba(0, 0, 0, 0.15);
     box-shadow: rgba(0, 0, 0, 0.06) 0 2px 4px;
     color: rgba(0, 0, 0, 0.65);
     transform: translateY(0);
+}
+
+main .buttons.container{
+    display: flex;
+    flex-direction: row;
+    gap: 30px;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
+    justify-items: center;
 }

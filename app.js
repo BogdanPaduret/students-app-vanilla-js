@@ -83,7 +83,11 @@ document.addEventListener("keydown", (e) => {
         maximizedWindow.textContent != "" &&
         maximizedWindow.textContent.length > 22
     ) {
-        let card = maximizedWindow.querySelector("article.maxi-card");
+        let card = maximizedWindow.querySelector(".maxi-card");
+        if (card == null) {
+            console.log("card is null");
+            card = maximizedWindow.querySelector(".edit-card");
+        }
 
         let cardItems = card.children[2].children;
         let email = cardItems[2].textContent;
@@ -95,8 +99,11 @@ document.addEventListener("keydown", (e) => {
             goToLeft(cardIndex);
         } else if (e.key == "ArrowRight") {
             goToRight(cardIndex);
-        } else if (e.key == "Enter") {
-            console.log("EDIT PROFILE!");
+        } else if (e.key == "Enter" && card.classList.contains("maxi-card")) {
+            let cardInfo = data[cardIndex];
+            editMaxiCard(cardInfo, cardIndex);
+        } else if (e.key == "Enter" && card.classList.contains("edit-card")) {
+            console.log("SHOULD SAVE INFO!");
         }
     } else {
         let currentPageIndex = parseInt(
@@ -104,11 +111,29 @@ document.addEventListener("keydown", (e) => {
         );
 
         if (e.key == "ArrowLeft" && currentPageIndex > 1) {
-            console.log("TO PREVIOUS PAGE");
             changePage(currentPageIndex - 1);
         } else if (e.key == "ArrowRight" && currentPageIndex < totalPages) {
-            console.log("TO NEXT PAGE");
             changePage(currentPageIndex + 1);
+        } else if (e.key == "Enter") {
+            console.log("SHOULD ADD NEW CARD!");
+        } else if (e.key == "ArrowUp") {
+            if (cardsPerPage < totalCards) {
+                cardsPerPage++;
+            } else {
+                alert(
+                    "There can be at most " +
+                        totalCards +
+                        " cards per page as these are all the cards."
+                );
+            }
+            init(cardsPerPage, 0);
+        } else if (e.key == "ArrowDown") {
+            if (cardsPerPage > 1) {
+                cardsPerPage--;
+            } else {
+                alert("There should be at least one card per page.");
+            }
+            init(cardsPerPage, 0);
         }
     }
 });
