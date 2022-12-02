@@ -187,6 +187,12 @@ function maximizeCard(card) {
     let cardInfo = data[index];
     generateMaxiCard(cardInfo, index);
 }
+function generateMaxiCard(cardInfo, index) {
+    let cardArticle = buildMaxiCard(cardInfo, index);
+
+    maximizedWindow.appendChild(cardArticle);
+    maximizedWindow.style.visibility = "visible";
+}
 function buildMaxiCard(cardInfo, index) {
     let card = generateMaximizedElements(cardInfo);
 
@@ -223,12 +229,6 @@ function buildMaxiCard(cardInfo, index) {
 
     return card.article;
 }
-function generateMaxiCard(cardInfo, index) {
-    let cardArticle = buildMaxiCard(cardInfo, index);
-
-    maximizedWindow.appendChild(cardArticle);
-    maximizedWindow.style.visibility = "visible";
-}
 function getCard(element) {
     let classes = element.classList;
     if (classes.contains("card") || classes.contains("maxi-card")) {
@@ -245,7 +245,11 @@ function getCard(element) {
 function getMaxiCard(element) {
     while (!element.classList.contains("maximized")) {
         let classes = element.classList;
-        if (classes.contains("maxi-card") || classes.contains("edit-card")) {
+        if (
+            classes.contains("maxi-card") ||
+            classes.contains("edit-card") ||
+            classes.contains("new-card")
+        ) {
             return element;
         }
         element = element.parentNode;
@@ -544,6 +548,194 @@ function deleteMaxiCard(card) {
     maximizedWindow.textContent = "";
     maximizedWindow.style.visibility = "hidden";
 }
+
+// add new card
+function addCard() {
+    let card = buildNewCard();
+    maximizedWindow.appendChild(card);
+    maximizedWindow.style.visibility = "visible";
+    maximizedWindow.querySelector(".new-card * .name").select();
+}
+function buildNewCard() {
+    let e = generateAddCardElements();
+
+    // containers
+    e.article.appendChild(e.upperContainer);
+    e.article.appendChild(e.leftContainer);
+    e.article.appendChild(e.mainContainer);
+    e.article.appendChild(e.rightContainer);
+    e.article.appendChild(e.lowerContainer);
+
+    // upper elements
+    e.upperContainer.appendChild(e.close);
+
+    // main elements
+    e.mainContainer.appendChild(e.portrait);
+    e.mainContainer.appendChild(e.name);
+    e.mainContainer.appendChild(e.email);
+    e.mainContainer.appendChild(e.horizontalLine);
+    e.mainContainer.appendChild(e.joinDate);
+    e.mainContainer.appendChild(e.age);
+
+    // lower elements
+    e.lowerContainer.appendChild(e.btnAdd);
+
+    return e.article;
+}
+function generateAddCardElements() {
+    // card
+    let article = document.createElement("article");
+    article.classList.add("firstname-lastname", "new-card");
+
+    // card-item
+    let mainContainer = document.createElement("div");
+    let upperContainer = document.createElement("div");
+    let lowerContainer = document.createElement("div");
+    let leftContainer = document.createElement("div");
+    let rightContainer = document.createElement("div");
+
+    let portrait = document.createElement("img");
+
+    let name = document.createElement("input");
+    let email = document.createElement("input");
+    let joinDate = document.createElement("input");
+    let age = document.createElement("input");
+
+    let horizontalLine = document.createElement("hr");
+
+    let close = document.createElement("img");
+
+    let btnAdd = document.createElement("button");
+
+    let cardItems = [
+        mainContainer,
+        upperContainer,
+        lowerContainer,
+        leftContainer,
+        rightContainer,
+        portrait,
+        name,
+        email,
+        joinDate,
+        age,
+        horizontalLine,
+        close,
+        btnAdd,
+    ];
+
+    let commonClasses = document.createElement("p").classList;
+    commonClasses.add("firstname-lastname", "new-card-item");
+
+    let specificClasses = [
+        "main-container",
+        "upper-container",
+        "lower-container",
+        "left-container",
+        "right-container",
+        "portrait",
+        "name",
+        "email",
+        "join-date",
+        "age",
+        "horizontal-line",
+        "close",
+        "add",
+    ];
+
+    for (let i = 0; i < cardItems.length; i++) {
+        cardItems[i].classList = commonClasses;
+        cardItems[i].classList.add(specificClasses[i]);
+    }
+
+    // populate elements with data
+    let inputElements = [name, email, joinDate, age];
+    let inputTypes = ["text", "email", "date", "number"];
+    let inputPlaceholders = [
+        "[first name] [last name]",
+        "[email@provider.com]",
+        "[date active]",
+        "[account age]",
+    ];
+    for (let i = 0; i < inputElements.length; i++) {
+        inputElements[i].type = inputTypes[i];
+        inputElements[i].placeholder = inputPlaceholders[i];
+    }
+
+    // nu merge sa pun alta valoare la data
+    let today = new Date(Date.now());
+    let month = today.getMonth() + 1;
+    let day = today.getDate();
+    let year = today.getFullYear();
+    joinDate.value = year + "-" + month + "-" + day;
+    joinDate.removeAttribute("placeholder");
+    // gata cu joinDate
+
+    portrait.src = "pictures/generic-portrait.png";
+    close.src = "pictures/close.png";
+    btnAdd.textContent = "Add Card";
+
+    // return statement
+    return {
+        article,
+        mainContainer,
+        upperContainer,
+        lowerContainer,
+        leftContainer,
+        rightContainer,
+        portrait,
+        name,
+        email,
+        joinDate,
+        age,
+        horizontalLine,
+        close,
+        btnAdd,
+    };
+}
+function addNewUser(card) {
+    let newUser = {
+        name: {
+            title: "",
+            first: "",
+            last: "",
+        },
+        email: "",
+        registered: {
+            date: "",
+            age: 0,
+        },
+        picture: {
+            large: "",
+            medium: "",
+            thumbnail: "",
+        },
+    };
+
+    let portrait = card.querySelector("* .portrait").src;
+    let fullName = card.querySelector("* .name").value;
+    let email = card.querySelector("* .email").value;
+    let joinDate = card.querySelector("* .join-date").value;
+    let age = card.querySelector("* .age").value;
+
+    let firstName = fullName.split(" ")[0];
+    let lastName = fullName.split(" ")[1];
+
+    newUser.name.first = firstName;
+    newUser.name.last = lastName;
+    newUser.email = email;
+    newUser.registered.date = joinDate;
+    newUser.registered.age = age;
+    newUser.picture.large = portrait;
+
+    data.push(newUser);
+    init(cardsPerPage, 0);
+    maximizedWindow.textContent = "";
+    maximizedWindow.style.visibility = "hidden";
+}
+function uploadPicture(card) {
+    console.log("YEEEEEY");
+}
+
 // helpers
 function copyClasses(from, to) {
     for (let i = 0; i < from.length; i++) {
