@@ -8,8 +8,11 @@ let cardsPerPage = 5;
 let totalCards = data.length;
 let totalPages = Math.ceil(totalCards / cardsPerPage);
 
+maximizedWindow.style.visibility = "hidden";
+
 init(cardsPerPage, 0);
 
+// thumbnail cards click events
 cardsContainer.addEventListener("click", (e) => {
     let element = e.target;
 
@@ -28,24 +31,21 @@ cardsContainer.addEventListener("click", (e) => {
     }
 });
 
+// maxi cards click events
 maximizedWindow.addEventListener("click", (e) => {
     let element = e.target;
     let classes = element.classList;
-    // console.log(classes);
     let card = getMaxiCard(element);
 
     if (classes.contains("close")) {
         closeMaxiCard();
-    } else if (card != null) {
-        console.log("CARD NOT NULL!");
-
-        let cardItems = card.children[2].children;
-        let email = cardItems[2].textContent;
+    } else if (card != null && card.classList.contains("maxi-card")) {
+        let email = card
+            .querySelector(".main-container")
+            .querySelector(".email").textContent;
         let cardIndex = retrieveCardIndex(email, 0);
 
         if (cardIndex != null) {
-            console.log("CARD INDEX NOT NULL!!");
-
             if (classes.contains("arrow")) {
                 if (classes.contains("left") && cardIndex > 0) {
                     goToLeft(cardIndex);
@@ -53,18 +53,23 @@ maximizedWindow.addEventListener("click", (e) => {
                     goToRight(cardIndex);
                 }
             } else if (element.tagName == "BUTTON") {
-                console.log("BUTTON!");
                 if (classes.contains("edit")) {
-                    let cardInfo = data[cardIndex];
-                    editMaxiCard(cardInfo, cardIndex);
-                } else if (classes.contains("save")) {
-                    console.log("should save these modifications somewhere");
+                    editMaxiCard(card, cardIndex);
                 }
+            } else if (classes.contains("delete")) {
+                deleteMaxiCard(card);
+            }
+        }
+    } else if (card != null && card.classList.contains("edit-card")) {
+        if (element.tagName == "BUTTON") {
+            if (classes.contains("save")) {
+                saveMaxiCard(card);
             }
         }
     }
 });
 
+// pages click events
 pagesContainer.addEventListener("click", (e) => {
     let element = e.target;
     if (element.classList.contains("page-number")) {
@@ -85,25 +90,30 @@ document.addEventListener("keydown", (e) => {
     ) {
         let card = maximizedWindow.querySelector(".maxi-card");
         if (card == null) {
-            console.log("card is null");
             card = maximizedWindow.querySelector(".edit-card");
         }
 
-        let cardItems = card.children[2].children;
-        let email = cardItems[2].textContent;
-        let cardIndex = retrieveCardIndex(email, 0);
+        if (card != null) {
+            let email = card.querySelector("* .email").textContent;
+            let cardIndex = retrieveCardIndex(email, 0);
 
-        if (e.key == "Escape") {
-            closeMaxiCard();
-        } else if (e.key == "ArrowLeft") {
-            goToLeft(cardIndex);
-        } else if (e.key == "ArrowRight") {
-            goToRight(cardIndex);
-        } else if (e.key == "Enter" && card.classList.contains("maxi-card")) {
-            let cardInfo = data[cardIndex];
-            editMaxiCard(cardInfo, cardIndex);
-        } else if (e.key == "Enter" && card.classList.contains("edit-card")) {
-            console.log("SHOULD SAVE INFO!");
+            if (e.key == "Escape") {
+                closeMaxiCard();
+            } else if (card.classList.contains("maxi-card")) {
+                if (e.key == "ArrowLeft") {
+                    goToLeft(cardIndex);
+                } else if (e.key == "ArrowRight") {
+                    goToRight(cardIndex);
+                } else if (e.key == "Enter") {
+                    editMaxiCard(card, cardIndex);
+                } else if (e.key == "Delete") {
+                    deleteMaxiCard(card);
+                }
+            } else if (card.classList.contains("edit-card")) {
+                if (e.key == "Enter") {
+                    saveMaxiCard(card);
+                }
+            }
         }
     } else {
         let currentPageIndex = parseInt(

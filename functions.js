@@ -12,7 +12,7 @@ function init(cardsPerPage, cardIndex) {
 }
 function closeMaxiCard() {
     maximizedWindow.textContent = "";
-    maximizedWindow.removeAttribute("style");
+    maximizedWindow.style.visibility = "hidden";
 }
 function goToLeft(cardIndex) {
     let prevIndex = cardIndex - 1;
@@ -180,8 +180,8 @@ function generateCardElements(item) {
 
 // maximize card
 function maximizeCard(card) {
-    let cardItems = card.children;
-    let email = cardItems[2].textContent;
+    console.log(card);
+    let email = card.querySelector("* .email").textContent;
 
     let index = retrieveCardIndex(email, 0);
     let cardInfo = data[index];
@@ -197,6 +197,7 @@ function buildMaxiCard(cardInfo, index) {
     card.article.appendChild(card.lowerContainer);
 
     card.upperContainer.appendChild(card.closeButton);
+    card.upperContainer.appendChild(card.deleteButton);
 
     card.mainContainer.appendChild(card.portrait);
     card.mainContainer.appendChild(card.name);
@@ -226,7 +227,7 @@ function generateMaxiCard(cardInfo, index) {
     let cardArticle = buildMaxiCard(cardInfo, index);
 
     maximizedWindow.appendChild(cardArticle);
-    styleMaxiWindow(maximizedWindow);
+    maximizedWindow.style.visibility = "visible";
 }
 function getCard(element) {
     let classes = element.classList;
@@ -244,7 +245,7 @@ function getCard(element) {
 function getMaxiCard(element) {
     while (!element.classList.contains("maximized")) {
         let classes = element.classList;
-        if (classes.contains("maxi-card")) {
+        if (classes.contains("maxi-card") || classes.contains("edit-card")) {
             return element;
         }
         element = element.parentNode;
@@ -265,6 +266,7 @@ function generateMaximizedElements(item) {
 
     let closeButton = document.createElement("img");
     let editButton = document.createElement("button");
+    let deleteButton = document.createElement("img");
 
     let leftArrow = generateArrow(-1);
     let rightArrow = generateArrow(1);
@@ -281,6 +283,7 @@ function generateMaximizedElements(item) {
     age.textContent = "Account age: " + item.registered.age + " years";
     closeButton.src = "pictures/close.png";
     editButton.textContent = "Edit profile";
+    deleteButton.src = "pictures/delete.png";
 
     // classes refactor for normal card items
     let elements = { portrait, name, email, horizontalLine, joinDate };
@@ -298,6 +301,7 @@ function generateMaximizedElements(item) {
         leftArrow,
         rightArrow,
         editButton,
+        deleteButton,
         mainContainer,
         upperContainer,
         lowerContainer,
@@ -327,6 +331,9 @@ function generateMaximizedElements(item) {
 
     editButton.classList = commonClasses;
     editButton.classList.add("edit");
+
+    deleteButton.classList = commonClasses;
+    deleteButton.classList.add("delete");
 
     mainContainer.classList = commonClasses;
     mainContainer.classList.add("main-container");
@@ -366,8 +373,6 @@ function retrieveCardIndex(email, offset) {
 function generateArrow(arrowDirection) {
     let arrow = document.createElement("img");
     arrow.src = "/pictures/arrow.png";
-    arrow.style.height = "50px";
-    arrow.style.webkitUserDrag = "none";
 
     if (arrowDirection < 0) {
         arrow.style.transform = "scaleX(-1)";
@@ -375,126 +380,9 @@ function generateArrow(arrowDirection) {
     return arrow;
 }
 
-// stylize maxi card functions
-function styleMaxiWindow(window) {
-    let style = window.style;
-
-    style.position = "fixed";
-    style.top = "0";
-    style.left = "0";
-    style.height = "100%";
-    style.width = "100%";
-    style.backgroundColor = "rgba(142, 134, 135, 0.5)";
-    style.display = "flex";
-    style.flexDirection = "row";
-    style.alignContent = "center";
-    style.justifyContent = "center";
-    style.alignItems = "center";
-    style.justifyItems = "center";
-    style.gap = "30px";
-}
+// stylize maxi-card functions
 function styleMaxiCard(card) {
-    styleMaxiArticle(card.article);
-    styleMaxiContainers(card);
-
-    styleMaxiClose(card.closeButton);
-    styleMaxiPortrait(card.portrait);
     styleMaxiName(card.name);
-    styleMaxiEmail(card.email);
-    styleMaxiHorizontalLine(card.horizontalLine);
-    styleMaxiJoinDate(card.joinDate);
-
-    styleEditButton(card.editButton);
-}
-
-function styleMaxiArticle(cardArticle) {
-    let style = cardArticle.style;
-
-    style.width = "400px";
-    style.height = "400px";
-    style.boxShadow = "rgba(99, 99, 99, 0.2) 0px 2px 8px 0px";
-    style.borderRadius = "5px";
-    style.backgroundColor = "white";
-
-    style.display = "grid";
-    style.gridTemplateColumns = "50px 270px 50px";
-    style.gridTemplateRows = "20px 320px 30px";
-
-    style.gridTemplateAreas = '"up up up" "le ma ri" "lo lo lo"';
-
-    style.gap = "0px";
-    style.alignContent = "center";
-    style.justifyItems = "center";
-    style.alignItems = "center";
-    style.padding = "15px";
-    style.borderTopRightRadius = "25px";
-}
-function styleMaxiContainers(card) {
-    let main = card.mainContainer.style;
-    let upper = card.upperContainer.style;
-    let lower = card.lowerContainer.style;
-    let left = card.leftContainer.style;
-    let right = card.rightContainer.style;
-
-    main.gridArea = "ma";
-    upper.gridArea = "up";
-    lower.gridArea = "lo";
-    left.gridArea = "le";
-    right.gridArea = "ri";
-
-    main.width = "100%";
-    main.height = "100%";
-    main.display = "flex";
-    main.flexDirection = "column";
-    main.justifyContent = "flex-start";
-    main.alignContent = "center";
-    main.justifyItems = "center";
-    main.alignItems = "center";
-
-    upper.width = "100%";
-    upper.height = "100%";
-    upper.display = "flex";
-    upper.flexDirection = "row-reverse";
-
-    left.height = "100%";
-    left.display = "flex";
-    left.flexDirection = "column";
-    left.alignContent = "center";
-    left.justifyContent = "center";
-
-    right.height = "100%";
-    right.display = "flex";
-    right.flexDirection = "column";
-    right.alignContent = "center";
-    right.justifyContent = "center";
-
-    lower.width = "100%";
-    lower.height = "100%";
-    lower.display = "flex";
-    lower.flexDirection = "row";
-    lower.alignContent = "center";
-    lower.justifyContent = "center";
-}
-
-function styleMaxiClose(item) {
-    let style = item.style;
-
-    style.width = "20px";
-    style.height = "20px";
-    style.margin = "0px";
-    style.webkitUserDrag = "none";
-
-    // style.alignSelf = "flex-start";
-}
-function styleMaxiPortrait(portrait) {
-    let s = portrait.style;
-
-    s.width = "150px";
-    s.height = "150px";
-    s.objectFit = "cover";
-    s.borderRadius = "50%";
-    s.margin = "00px 0px 10px 0px";
-    s.webkitUserDrag = "none";
 }
 function styleMaxiName(name) {
     let s = name.style;
@@ -507,103 +395,144 @@ function styleMaxiName(name) {
         s.margin = "5px 0px";
     }
 }
-function styleMaxiEmail(email) {
-    let s = email.style;
 
-    s.margin = "2.5px 0px 0px 0px";
-}
-function styleMaxiHorizontalLine(horizontalLine) {
-    let s = horizontalLine.style;
+// edit maxi-card
+function editMaxiCard(card, cardIndex) {
+    buildEditCard(card);
 
-    s.width = "100%";
-    s.height = "0px";
-    s.margin = "20px 0px";
-}
-function styleMaxiJoinDate(joinDate) {
-    let s = joinDate.style;
-
-    s.margin = "0px 0px 5px 0px";
-}
-// does nothing currently since the edit button is styled through CSS
-function styleEditButton(editButton) {}
-
-// edit maxi card
-function editMaxiCard(cardInfo, cardIndex) {
-    buildEditCard(cardInfo, cardIndex);
-    let card = maximizedWindow.querySelector("article.maxi-card");
-    console.log(card.classList);
     card.classList.replace("maxi-card", "edit-card");
-    console.log(card.classList);
 }
-function saveMaxiCard(cardInfo, cardIndex) {}
-function buildEditCard(cardInfo, index) {
-    let inputCard = generateInputElements(cardInfo, index);
-    maximizedWindow.textContent = "";
-    maximizedWindow.appendChild(inputCard);
-}
-function generateInputElements(cardInfo, index) {
-    let card = buildMaxiCard(cardInfo, index);
-    let mainContainer = card.querySelector(".main-container");
+function buildEditCard(card) {
+    let inputElements = generateInputElements(card);
 
-    let leftContainer = card.querySelector(".left-container");
-    let rightContainer = card.querySelector(".right-container");
-
-    // card.style.gridTemplateAreas = '"up up up" "ma ma ma" "lo lo lo"';
-
-    // card.removeChild(leftContainer);
-    // card.removeChild(rightContainer);
-
-    leftContainer.style.visibility = "hidden";
-    rightContainer.style.visibility = "hidden";
-
-    let mcName = mainContainer.querySelector(".name");
-    let mcEmail = mainContainer.querySelector(".email");
-
-    let name = document.createElement("input");
-    name.classList = mcName.classList;
-    name.type = "text";
-    name.value = mcName.textContent;
-    name.style.fontSize = "20px";
-    name.style.fontWeight = "bold";
-    name.style.fontStyle = "italic";
-    name.style.width = "120%";
-    name.style.height = "37px";
-    name.style.margin = "2.5px 0px";
-    name.style.border = "0px";
-    name.style.borderBottom = "2px solid rgb(128, 128, 128)";
-    name.style.borderBottomLeftRadius = "5px";
-    name.style.borderBottomRightRadius = "5px";
-    name.style.outline = "none";
-    name.style.textAlign = "center";
-
-    let email = document.createElement("input");
-    email.classList = mcEmail.classList;
-    email.type = "text";
-    email.value = mcEmail.textContent;
-    email.style.fontSize = "14px";
-    email.style.fontWeight = "normal";
-    email.style.fontStyle = "italic";
-    email.style.height = "18px";
-    email.style.width = "120%";
-    email.style.margin = "2.5px 0px 0px 0px";
-    email.style.border = "0px";
-    email.style.borderBottom = "2px solid rgb(128, 128, 128)";
-    email.style.borderBottomLeftRadius = "5px";
-    email.style.borderBottomRightRadius = "5px";
-    email.style.outline = "none";
-    email.style.textAlign = "center";
-
-    let button = card.querySelector(".lower-container").querySelector(".edit");
-
+    let button = card.querySelector("* .edit");
     button.classList.replace("edit", "save");
     button.textContent = "Save Modifications";
 
-    mainContainer.replaceChild(name, mcName);
-    mainContainer.replaceChild(email, mcEmail);
+    let mainContainer = card.querySelector(".main-container");
 
-    return card;
+    let currentNameElement = mainContainer.querySelector(".name");
+    let currentEmailElement = mainContainer.querySelector(".email");
+    let currentJoinDateElement = mainContainer.querySelector(".join-date");
+    let currentAgeElement = mainContainer.querySelector(".age");
+
+    mainContainer.replaceChild(inputElements.name, currentNameElement);
+    mainContainer.replaceChild(inputElements.email, currentEmailElement);
+    mainContainer.replaceChild(inputElements.joinDate, currentJoinDateElement);
+    mainContainer.replaceChild(inputElements.age, currentAgeElement);
+}
+function generateInputElements(card) {
+    let mainContainer = card.querySelector(".main-container");
+
+    let currentNameElement = mainContainer.querySelector(".name");
+    let currentEmailElement = mainContainer.querySelector(".email");
+    let currentJoinDateElement = mainContainer.querySelector(".join-date");
+    let currentAgeElement = mainContainer.querySelector(".age");
+
+    let nameInput = document.createElement("input");
+    nameInput.classList = currentNameElement.classList;
+    nameInput.type = "text";
+    nameInput.placeholder = currentNameElement.textContent;
+
+    let emailInput = document.createElement("input");
+    emailInput.classList = currentEmailElement.classList;
+    emailInput.type = "email";
+    emailInput.placeholder = currentEmailElement.textContent;
+
+    let joinDateInput = document.createElement("input");
+    joinDateInput.classList = currentJoinDateElement.classList;
+    joinDateInput.type = "date";
+    // current date format mm-dd-yyyy
+    let currentJoinDateValue = currentJoinDateElement.textContent
+        .split(" ")[2]
+        .split("-");
+    joinDateInput.value =
+        currentJoinDateValue[2] +
+        "-" +
+        currentJoinDateValue[0] +
+        "-" +
+        currentJoinDateValue[1];
+
+    let ageInput = document.createElement("input");
+    ageInput.classList = currentAgeElement.classList;
+    ageInput.type = "number";
+    ageInput.min = "0";
+    let currentAgeValue = currentAgeElement.textContent.split(" ");
+    ageInput.placeholder = currentAgeValue[2];
+
+    let joinDateContainer = document.createElement("div");
+    let joinDateDescription = document.createElement("p");
+    joinDateDescription.textContent = "Joined on: ";
+    joinDateContainer.classList = joinDateInput.classList;
+    joinDateContainer.appendChild(joinDateDescription);
+    joinDateContainer.appendChild(joinDateInput);
+
+    let ageContainer = document.createElement("div");
+    let agePreffix = document.createElement("p");
+    let ageSuffix = document.createElement("p");
+    agePreffix.textContent = "Account age: ";
+    ageSuffix.textContent = " years";
+    ageContainer.classList = ageInput.classList;
+    ageContainer.appendChild(agePreffix);
+    ageContainer.appendChild(ageInput);
+    ageContainer.appendChild(ageSuffix);
+
+    return {
+        name: nameInput,
+        email: emailInput,
+        joinDate: joinDateContainer,
+        age: ageContainer,
+    };
 }
 
+// save maxi-card
+function saveMaxiCard(card) {
+    let oldName = card.classList[0];
+    let thumbnailCard = document.querySelector("article.card." + oldName);
+
+    let oldEmail = thumbnailCard.querySelector("* .email").textContent;
+    let cardIndex = retrieveCardIndex(oldEmail, 0);
+
+    let fullName = card.querySelector("* .name").value;
+    console.log(fullName);
+    let email = card.querySelector("* .email").value;
+    let joinDateArray = card
+        .querySelector("* .join-date")
+        .querySelector("input")
+        .value.split("-");
+    let joinDate =
+        joinDateArray[1] + "-" + joinDateArray[2] + "-" + joinDateArray[0];
+    let age = card.querySelector("* .age").querySelector("input").value;
+
+    let nameArray = oldName.split("-");
+
+    if (fullName != "" && fullName.split(" ").length == 2) {
+        data[cardIndex].name.first = fullName.split(" ")[0];
+        data[cardIndex].name.last = fullName.split(" ")[1];
+        nameArray = fullName.split(" ");
+    }
+    if (email != "") {
+        data[cardIndex].email = email;
+    }
+    if (joinDate != "") {
+        data[cardIndex].registered.date = joinDate;
+    }
+    if (age != "") {
+        data[cardIndex].registered.age = age;
+    }
+
+    let cardClassName = nameArray[0] + "-" + nameArray[1];
+
+    init(cardsPerPage, 0);
+    closeMaxiCard();
+    thumbnailCard = document.querySelector("article.card." + cardClassName);
+    maximizeCard(thumbnailCard);
+}
+
+// delete maxi-card
+function deleteMaxiCard(card) {
+    console.log("CARD SHOULD BE DELETED!");
+}
 // helpers
 function copyClasses(from, to) {
     for (let i = 0; i < from.length; i++) {
