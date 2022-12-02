@@ -187,6 +187,12 @@ function maximizeCard(card) {
     let cardInfo = data[index];
     generateMaxiCard(cardInfo, index);
 }
+function generateMaxiCard(cardInfo, index) {
+    let cardArticle = buildMaxiCard(cardInfo, index);
+
+    maximizedWindow.appendChild(cardArticle);
+    maximizedWindow.style.visibility = "visible";
+}
 function buildMaxiCard(cardInfo, index) {
     let card = generateMaximizedElements(cardInfo);
 
@@ -222,12 +228,6 @@ function buildMaxiCard(cardInfo, index) {
     card.article.draggable = "true";
 
     return card.article;
-}
-function generateMaxiCard(cardInfo, index) {
-    let cardArticle = buildMaxiCard(cardInfo, index);
-
-    maximizedWindow.appendChild(cardArticle);
-    maximizedWindow.style.visibility = "visible";
 }
 function getCard(element) {
     let classes = element.classList;
@@ -544,6 +544,152 @@ function deleteMaxiCard(card) {
     maximizedWindow.textContent = "";
     maximizedWindow.style.visibility = "hidden";
 }
+
+// add new card
+function addCard() {
+    console.log("should add card");
+    let card = buildNewCard();
+    maximizedWindow.appendChild(card);
+    maximizedWindow.style.visibility = "visible";
+    maximizedWindow.querySelector(".new-card * .name").select();
+}
+function buildNewCard() {
+    let e = generateAddCardElements();
+
+    // containers
+    e.article.appendChild(e.upperContainer);
+    e.article.appendChild(e.leftContainer);
+    e.article.appendChild(e.mainContainer);
+    e.article.appendChild(e.rightContainer);
+    e.article.appendChild(e.lowerContainer);
+
+    // upper elements
+    e.upperContainer.appendChild(e.close);
+
+    // main elements
+    e.mainContainer.appendChild(e.portrait);
+    e.mainContainer.appendChild(e.name);
+    e.mainContainer.appendChild(e.email);
+    e.mainContainer.appendChild(e.horizontalLine);
+    e.mainContainer.appendChild(e.joinDate);
+    e.mainContainer.appendChild(e.age);
+
+    // lower elements
+    e.lowerContainer.appendChild(e.btnAdd);
+
+    return e.article;
+}
+function generateAddCardElements() {
+    // card
+    let article = document.createElement("article");
+    article.classList.add("firstname-lastname", "new-card");
+
+    // card-item
+    let mainContainer = document.createElement("div");
+    let upperContainer = document.createElement("div");
+    let lowerContainer = document.createElement("div");
+    let leftContainer = document.createElement("div");
+    let rightContainer = document.createElement("div");
+
+    let portrait = document.createElement("img");
+
+    let name = document.createElement("input");
+    let email = document.createElement("input");
+    let joinDate = document.createElement("input");
+    let age = document.createElement("input");
+
+    let horizontalLine = document.createElement("hr");
+
+    let close = document.createElement("img");
+
+    let btnAdd = document.createElement("button");
+
+    let cardItems = [
+        mainContainer,
+        upperContainer,
+        lowerContainer,
+        leftContainer,
+        rightContainer,
+        portrait,
+        name,
+        email,
+        joinDate,
+        age,
+        horizontalLine,
+        close,
+        btnAdd,
+    ];
+
+    let commonClasses = document.createElement("p").classList;
+    commonClasses.add("firstname-lastname", "new-card-item");
+
+    let specificClasses = [
+        "main-container",
+        "upper-container",
+        "lower-container",
+        "left-container",
+        "right-container",
+        "portrait",
+        "name",
+        "email",
+        "join-date",
+        "age",
+        "horizontal-line",
+        "close",
+        "add",
+    ];
+
+    for (let i = 0; i < cardItems.length; i++) {
+        cardItems[i].classList = commonClasses;
+        cardItems[i].classList.add(specificClasses[i]);
+    }
+
+    // populate elements with data
+    let inputElements = [name, email, joinDate, age];
+    let inputTypes = ["text", "email", "date", "number"];
+    let inputPlaceholders = [
+        "[first name] [last name]",
+        "[email@provider.com]",
+        "[date active]",
+        "[account age]",
+    ];
+    for (let i = 0; i < inputElements.length; i++) {
+        inputElements[i].type = inputTypes[i];
+        inputElements[i].placeholder = inputPlaceholders[i];
+    }
+
+    // nu merge sa pun alta valoare la data
+    let today = new Date(Date.now());
+    let month = today.getMonth() + 1;
+    let day = today.getDate();
+    let year = today.getFullYear();
+    joinDate.value = year + "-" + month + "-" + day;
+    joinDate.removeAttribute("placeholder");
+    // gata cu joinDate
+
+    portrait.src = "pictures/generic-portrait.png";
+    close.src = "pictures/close.png";
+    btnAdd.textContent = "Add Card";
+
+    // return statement
+    return {
+        article,
+        mainContainer,
+        upperContainer,
+        lowerContainer,
+        leftContainer,
+        rightContainer,
+        portrait,
+        name,
+        email,
+        joinDate,
+        age,
+        horizontalLine,
+        close,
+        btnAdd,
+    };
+}
+
 // helpers
 function copyClasses(from, to) {
     for (let i = 0; i < from.length; i++) {

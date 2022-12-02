@@ -3,6 +3,9 @@ let cardsContainer = document.querySelector(
 );
 let maximizedWindow = document.querySelector("main section.maximized");
 let pagesContainer = document.querySelector("footer section.pages.container");
+let btnAdd = document.querySelector(
+    "main section.buttons.container button.add-card"
+);
 
 let cardsPerPage = 5;
 let totalCards = data.length;
@@ -82,16 +85,26 @@ pagesContainer.addEventListener("click", (e) => {
     changePage(selectedPage);
 });
 
+// add button click event
+btnAdd.addEventListener("click", () => {
+    addCard();
+});
+
 // key presses
 document.addEventListener("keydown", (e) => {
     if (
-        maximizedWindow.textContent != "" &&
-        maximizedWindow.textContent.length > 22
+        maximizedWindow.textContent != "" ||
+        maximizedWindow.textContent.length > 35
     ) {
         let card = maximizedWindow.querySelector(".maxi-card");
         if (card == null) {
             card = maximizedWindow.querySelector(".edit-card");
         }
+        if (card == null) {
+            card = maximizedWindow.querySelector(".new-card");
+        }
+
+        console.log(card);
 
         if (card != null) {
             let email = card.querySelector("* .email").textContent;
