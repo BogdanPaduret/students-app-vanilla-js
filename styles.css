@@ -109,30 +109,272 @@ main section.cards-list.container article.card .card-item.join-date {
     color: rgb(142, 134, 135);
 }
 
-
+/* maxi card elements */
 .maximized {
     /* visibility: hidden; */
     position: fixed;
-    /* top: 0px;
+    top: 0px;
     left: 0px;
     width: 100%;
     height: 100%;
-    background-color: rgba(142,134,135,0.5); */
-    /* display: flex;
+    background-color: rgba(142,134,135,0.5);
+    display: flex;
     flex-direction: row;
     align-content: center;
     justify-content: center;
     align-items: center;
     justify-items: center;
-    gap: 30px; */
+    gap: 30px;
 }
 
+/* maxi article */
+main section.maximized article.maxi-card,
+main section.maximized article.edit-card{
+    width: 400px;
+    height: 400px;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    border-radius: 5px;
+    background-color: white;
+
+    display: grid;
+    grid-template-columns: 50px 270px 50px;
+    grid-template-rows: 20px 320px 30px;
+
+    grid-template-areas:
+    "up up up"
+    "le ma ri"
+    "lo lo lo";
+
+    gap: 0px;
+    align-content: center;
+    justify-items: center;
+    align-items: center;
+    padding: 15px;
+    border-top-right-radius: 25px;
+}
+
+/* maxi containers */
+main section.maximized article.maxi-card .upper-container,
+main section.maximized article.edit-card .upper-container{
+    grid-area: up;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: row-reverse;
+    align-content: space-between;
+    justify-content: space-between;
+}
+main section.maximized article.maxi-card .left-container,
+main section.maximized article.maxi-card .right-container{
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    justify-content: center;
+}
+main section.maximized article.maxi-card .left-container{
+    grid-area: le;
+}
+main section.maximized article.maxi-card .main-container,
+main section.maximized article.edit-card .main-container{
+    grid-area: ma;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-content: center;
+    justify-items: center;
+    align-items: center;
+}
+main section.maximized article.maxi-card .right-container{
+    grid-area: ri;
+}
+main section.maximized article.maxi-card .lower-container,
+main section.maximized article.edit-card .lower-container{
+    grid-area: lo;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    align-content: center;
+    justify-content: center;
+}
+
+/* maxi and edit elements */
+main section.maximized article.maxi-card * .close,
+main section.maximized article.edit-card * .close{
+    width: 20px;
+    height: 20px;
+    margin: 0px;
+    -webkit-user-drag: none;
+}
+main section.maximized article.maxi-card * .delete{
+    width: 20px;
+    height: 20px;
+    margin: 0px;
+    -webkit-user-drag: none;
+}
+main section.maximized article.maxi-card * .portrait,
+main section.maximized article.edit-card * .portrait{
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 50%;
+    margin: 0px 0px 10px 0px;
+    -webkit-user-drag: none;
+}
+main section.maximized article.maxi-card * .email{
+    margin: 2.5px 0px 0px 0px;
+}
+main section.maximized article.maxi-card * .horizontal-line{
+    width: 100%;
+    height: 0px;
+    margin: 20px 0px;
+}
+main section.maximized article.maxi-card * .join-date{
+    margin: 0px 0px 5px 0px;
+}
+main section.maximized article.maxi-card * .arrow{
+    height: 50px;
+    -webkit-user-drag: none;
+}
+
+/* only edit elements */
+main section.maximized article.edit-card .left-container,
+main section.maximized article.edit-card .right-container{
+    visibility: hidden;
+}
+main section.maximized article.edit-card * .delete{
+    visibility: hidden;
+}
+main section.maximized article.edit-card * .name,
+main section.maximized article.edit-card * .email,
+main section.maximized article.edit-card * input.join-date,
+main section.maximized article.edit-card * input.age{
+        color: rgb(128, 128, 128);
+        font-weight: bold;
+        font-style: italic;
+        width: 120%;
+        border: 0px;
+        border-bottom: 1px dashed rgb(128, 128, 128);
+        border-bottom-left-radius: 5px;
+        border-bottom-right-radius: 5px;
+        outline: none;
+        text-align: center;
+}
+main section.maximized article.edit-card * .name{
+    font-size: 20px;
+    height: 37px;
+    margin: 2.5px 0px;
+}
+main section.maximized article.edit-card * .email{
+    font-size: 14px;
+    height: 18px;
+    margin: 2.5px 0px 0px 0px;
+}
+main section.maximized article.edit-card * .join-date *{
+    margin: 0px 0px 5px 0px;
+}
+main section.maximized article.edit-card * .horizontal-line{
+    margin: 20px 0px;
+}
+
+main section.maximized article.edit-card * div.join-date{
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, 50%);
+    gap: 0px;
+    align-content: center;
+    justify-content: center;
+}
+main section.maximized article.edit-card * div.join-date p:first-child{
+    text-align: right;
+}
+main section.maximized article.edit-card * div.join-date input{
+    width: 90%;
+    text-align: center;
+}
+
+main section.maximized article.edit-card * div.age{
+    width: 100%;
+    display: grid;
+    grid-template-columns: 50% 25% 25%;
+    gap: 0px;
+    align-content: center;
+    justify-content: center;
+}
+main section.maximized article.edit-card * div.age p:first-child{
+    text-align: right;
+    /* display: inline; */
+    /* width: 100px; */
+}
+main section.maximized article.edit-card * div.age input{
+    width: 90%;
+    text-align: center;
+}
+
+
+/* maxi card arrow transforms */
 .maxi-card-item.close:hover {
     cursor: pointer;
 }
-
 .arrow:hover {
     cursor: pointer;
+}
+button.maxi-card-item,
+button.add-card {
+    align-items: center;
+    background-color: #FFFFFF;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: .25rem;
+    box-shadow: rgba(0, 0, 0, 0.02) 0 1px 3px 0;
+    box-sizing: border-box;
+    color: rgba(114, 114, 114, 0.85);
+    cursor: pointer;
+    display: inline-flex;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    justify-content: center;
+    line-height: 1;
+    margin: 0;
+    /* min-height: 3rem; */
+    height: 30px;
+    /* padding: calc(.875rem - 1px) calc(1.5rem - 1px); */
+    padding: 5px;
+    /* position: relative; */
+    text-decoration: none;
+    transition: all 50ms;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    vertical-align: baseline;
+    width: 100px;
+
+    /* border-color: rgba(0, 0, 0, 0.15);
+    box-shadow: rgba(0, 0, 0, 0.1) 0 4px 12px;
+    color: rgba(0, 0, 0, 0.65); */
+}
+button.maxi-card-item:hover,
+button.maxi-card-item:focus,
+button.add-card:hover,
+button.add-card:focus {
+    border-color: rgba(0, 0, 0, 0.15);
+    box-shadow: rgba(0, 0, 0, 0.1) 0 4px 12px;
+    color: rgba(0, 0, 0, 0.65);
+}
+button.maxi-card-item:hover,
+button.add-card:hover {
+    transform: translateY(-1px);
+}
+button.maxi-card-item:active,
+button.add-card:active {
+    background-color: #F0F0F1;
+    border-color: rgba(0, 0, 0, 0.15);
+    box-shadow: rgba(0, 0, 0, 0.06) 0 2px 4px;
+    color: rgba(0, 0, 0, 0.65);
+    transform: translateY(0);
 }
 
 /* page styling */
@@ -173,64 +415,6 @@ footer section.pages.container article.page-element.current-page {
 
 footer section.pages.container article.page-element.current-page {
     cursor: not-allowed;
-}
-
-button.maxi-card-item,
-button.add-card {
-    align-items: center;
-    background-color: #FFFFFF;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    border-radius: .25rem;
-    box-shadow: rgba(0, 0, 0, 0.02) 0 1px 3px 0;
-    box-sizing: border-box;
-    color: rgba(114, 114, 114, 0.85);
-    cursor: pointer;
-    display: inline-flex;
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 12px;
-    font-weight: 600;
-    justify-content: center;
-    line-height: 1;
-    margin: 0;
-    /* min-height: 3rem; */
-    height: 30px;
-    /* padding: calc(.875rem - 1px) calc(1.5rem - 1px); */
-    padding: 5px;
-    /* position: relative; */
-    text-decoration: none;
-    transition: all 50ms;
-    user-select: none;
-    -webkit-user-select: none;
-    touch-action: manipulation;
-    vertical-align: baseline;
-    width: 100px;
-
-    /* border-color: rgba(0, 0, 0, 0.15);
-    box-shadow: rgba(0, 0, 0, 0.1) 0 4px 12px;
-    color: rgba(0, 0, 0, 0.65); */
-}
-
-button.maxi-card-item:hover,
-button.maxi-card-item:focus,
-button.add-card:hover,
-button.add-card:focus {
-    border-color: rgba(0, 0, 0, 0.15);
-    box-shadow: rgba(0, 0, 0, 0.1) 0 4px 12px;
-    color: rgba(0, 0, 0, 0.65);
-}
-
-button.maxi-card-item:hover,
-button.add-card:hover {
-    transform: translateY(-1px);
-}
-
-button.maxi-card-item:active,
-button.add-card:active {
-    background-color: #F0F0F1;
-    border-color: rgba(0, 0, 0, 0.15);
-    box-shadow: rgba(0, 0, 0, 0.06) 0 2px 4px;
-    color: rgba(0, 0, 0, 0.65);
-    transform: translateY(0);
 }
 
 main .buttons.container{
