@@ -183,7 +183,7 @@ function maximizeCard(card) {
     console.log(card);
     let email = card.querySelector("* .email").textContent;
 
-    let index = retrieveCardIndex(email, 0);
+    let index = getCardIndex(email, 0);
     let cardInfo = data[index];
     generateMaxiCard(cardInfo, index);
 }
@@ -353,8 +353,8 @@ function generateMaximizedElements(item) {
     // return
     return elements;
 }
-function retrieveCardInfo(email, offset) {
-    let index = retrieveCardIndex(email, offset);
+function getCardInfo(email, offset) {
+    let index = getCardIndex(email, offset);
 
     if (index != null) {
         return data[index];
@@ -362,7 +362,7 @@ function retrieveCardInfo(email, offset) {
         return index;
     }
 }
-function retrieveCardIndex(email, offset) {
+function getCardIndex(email, offset) {
     for (let i = 0; i < totalCards; i++) {
         if (data[i].email == email) {
             return i + offset;
@@ -491,7 +491,7 @@ function saveMaxiCard(card) {
     let thumbnailCard = document.querySelector("article.card." + oldName);
 
     let oldEmail = thumbnailCard.querySelector("* .email").textContent;
-    let cardIndex = retrieveCardIndex(oldEmail, 0);
+    let cardIndex = getCardIndex(oldEmail, 0);
 
     let fullName = card.querySelector("* .name").value;
     console.log(fullName);
@@ -531,7 +531,18 @@ function saveMaxiCard(card) {
 
 // delete maxi-card
 function deleteMaxiCard(card) {
-    console.log("CARD SHOULD BE DELETED!");
+    let email = card.querySelector("* .email").textContent;
+    let cardIndex = getCardIndex(email, 0);
+
+    console.log(data.length);
+
+    data.splice(cardIndex, 1);
+
+    console.log(data.length);
+
+    init(cardsPerPage, 0);
+    maximizedWindow.textContent = "";
+    maximizedWindow.style.visibility = "hidden";
 }
 // helpers
 function copyClasses(from, to) {
