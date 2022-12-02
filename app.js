@@ -43,7 +43,7 @@ maximizedWindow.addEventListener("click", (e) => {
         let email = card
             .querySelector(".main-container")
             .querySelector(".email").textContent;
-        let cardIndex = retrieveCardIndex(email, 0);
+        let cardIndex = getCardIndex(email, 0);
 
         if (cardIndex != null) {
             if (classes.contains("arrow")) {
@@ -95,7 +95,7 @@ document.addEventListener("keydown", (e) => {
 
         if (card != null) {
             let email = card.querySelector("* .email").textContent;
-            let cardIndex = retrieveCardIndex(email, 0);
+            let cardIndex = getCardIndex(email, 0);
 
             if (e.key == "Escape") {
                 closeMaxiCard();
