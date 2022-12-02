@@ -245,7 +245,11 @@ function getCard(element) {
 function getMaxiCard(element) {
     while (!element.classList.contains("maximized")) {
         let classes = element.classList;
-        if (classes.contains("maxi-card") || classes.contains("edit-card")) {
+        if (
+            classes.contains("maxi-card") ||
+            classes.contains("edit-card") ||
+            classes.contains("new-card")
+        ) {
             return element;
         }
         element = element.parentNode;
@@ -547,7 +551,6 @@ function deleteMaxiCard(card) {
 
 // add new card
 function addCard() {
-    console.log("should add card");
     let card = buildNewCard();
     maximizedWindow.appendChild(card);
     maximizedWindow.style.visibility = "visible";
@@ -688,6 +691,49 @@ function generateAddCardElements() {
         close,
         btnAdd,
     };
+}
+function addNewUser(card) {
+    let newUser = {
+        name: {
+            title: "",
+            first: "",
+            last: "",
+        },
+        email: "",
+        registered: {
+            date: "",
+            age: 0,
+        },
+        picture: {
+            large: "",
+            medium: "",
+            thumbnail: "",
+        },
+    };
+
+    let portrait = card.querySelector("* .portrait").src;
+    let fullName = card.querySelector("* .name").value;
+    let email = card.querySelector("* .email").value;
+    let joinDate = card.querySelector("* .join-date").value;
+    let age = card.querySelector("* .age").value;
+
+    let firstName = fullName.split(" ")[0];
+    let lastName = fullName.split(" ")[1];
+
+    newUser.name.first = firstName;
+    newUser.name.last = lastName;
+    newUser.email = email;
+    newUser.registered.date = joinDate;
+    newUser.registered.age = age;
+    newUser.picture.large = portrait;
+
+    data.push(newUser);
+    init(cardsPerPage, 0);
+    maximizedWindow.textContent = "";
+    maximizedWindow.style.visibility = "hidden";
+}
+function uploadPicture(card) {
+    console.log("YEEEEEY");
 }
 
 // helpers

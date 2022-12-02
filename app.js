@@ -69,6 +69,14 @@ maximizedWindow.addEventListener("click", (e) => {
                 saveMaxiCard(card);
             }
         }
+    } else if (card != null && card.classList.contains("new-card")) {
+        if (element.tagName == "BUTTON") {
+            if (classes.contains("add")) {
+                addNewUser(card);
+            }
+        } else if (element.classList.contains("portrait")) {
+            uploadPicture(card);
+        }
     }
 });
 
@@ -104,8 +112,6 @@ document.addEventListener("keydown", (e) => {
             card = maximizedWindow.querySelector(".new-card");
         }
 
-        console.log(card);
-
         if (card != null) {
             let email = card.querySelector("* .email").textContent;
             let cardIndex = getCardIndex(email, 0);
@@ -125,6 +131,10 @@ document.addEventListener("keydown", (e) => {
             } else if (card.classList.contains("edit-card")) {
                 if (e.key == "Enter") {
                     saveMaxiCard(card);
+                }
+            } else if (card.classList.contains("new-card")) {
+                if (e.key == "Enter") {
+                    addNewUser();
                 }
             }
         }
