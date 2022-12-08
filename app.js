@@ -1,18 +1,43 @@
+// thumbnail cards variables
 let cardsContainer = document.querySelector(
     "main section.cards-list.container"
 );
+
+// maximized card variables
 let maximizedWindow = document.querySelector("main section.maximized");
+
+// pages variables
 let pagesContainer = document.querySelector("footer section.pages.container");
 let btnAdd = document.querySelector(
     "main section.buttons.container button.add-card"
 );
-
+let dataTemp = [];
+Object.assign(dataTemp, data);
 let cardsPerPage = 5;
-let totalCards = data.length;
+let totalCards = dataTemp.length;
 let totalPages = Math.ceil(totalCards / cardsPerPage);
 
-maximizedWindow.style.visibility = "hidden";
+// filter variables
+let filterStartDate = document.querySelector(
+    "main section.control.container article.filter.container div.filter-date-start.container #filter-date-start"
+);
+let filterEndDate = document.querySelector(
+    "main section.control.container article.filter.container div.filter-date-end.container #filter-date-end"
+);
+let btnFilter = document.querySelector(
+    "main section.control.container article.filter.container div.filter.buttons button.filter-all"
+);
 
+// search variables
+let searchQueueName = document.querySelector(
+    "main section.control.container article.search.container div.search-name.container #search-name"
+);
+let btnSearch = document.querySelector(
+    "main section.control.container article.search.container div.search.buttons button.search-all"
+);
+
+// site init calls
+maximizedWindow.style.visibility = "hidden";
 init(cardsPerPage, 0);
 
 // thumbnail cards click events
@@ -100,10 +125,7 @@ btnAdd.addEventListener("click", () => {
 
 // key presses
 document.addEventListener("keydown", (e) => {
-    if (
-        maximizedWindow.textContent != "" ||
-        maximizedWindow.textContent.length > 35
-    ) {
+    if (maximizedWindow.querySelectorAll("article").length > 0) {
         let card = maximizedWindow.querySelector(".maxi-card");
         if (card == null) {
             card = maximizedWindow.querySelector(".edit-card");
@@ -169,4 +191,29 @@ document.addEventListener("keydown", (e) => {
             init(cardsPerPage, 0);
         }
     }
+});
+
+// filter click events
+btnFilter.addEventListener("click", () => {
+    let newData = [...data];
+
+    if (filterStartDate.value != "") {
+        newData = trimOlder(newData, filterStartDate.value);
+        dataTemp = [...newData];
+    }
+    if (filterEndDate.value != "") {
+        newData = trimNewer(newData, filterEndDate.value);
+    }
+
+    dataTemp = [...newData];
+    init(cardsPerPage, 0);
+});
+
+btnSearch.addEventListener("click", () => {
+    let newArr = [...data];
+    if (searchQueueName.value != "") {
+        newArr = [...searchByName(newArr, searchQueueName.value)];
+    }
+    dataTemp = [...newArr];
+    init(cardsPerPage, 0);
 });
