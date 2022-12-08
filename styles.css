@@ -342,7 +342,8 @@ main section.maximized article.edit-card * div.age input{
     cursor: pointer;
 }
 button.maxi-card-item,
-button.add-card {
+button.add-card,
+main section.control.container article div.buttons button {
     align-items: center;
     background-color: #FFFFFF;
     border: 1px solid rgba(0, 0, 0, 0.1);
@@ -378,17 +379,21 @@ button.add-card {
 button.maxi-card-item:hover,
 button.maxi-card-item:focus,
 button.add-card:hover,
-button.add-card:focus {
+button.add-card:focus,
+main section.control.container article div.buttons button:hover,
+main section.control.container article div.buttons button:focus{
     border-color: rgba(0, 0, 0, 0.15);
     box-shadow: rgba(0, 0, 0, 0.1) 0 4px 12px;
     color: rgba(0, 0, 0, 0.65);
 }
 button.maxi-card-item:hover,
-button.add-card:hover {
+button.add-card:hover,
+main section.control.container article div.buttons button:hover {
     transform: translateY(-1px);
 }
 button.maxi-card-item:active,
-button.add-card:active {
+button.add-card:active,
+main section.control.container article div.buttons button:active {
     background-color: #F0F0F1;
     border-color: rgba(0, 0, 0, 0.15);
     box-shadow: rgba(0, 0, 0, 0.06) 0 2px 4px;
@@ -453,6 +458,52 @@ main .buttons.container{
 
 
 /* filters and search */
-/* main section.control.container{
-    position
-} */
+main section.control.container{
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    width: 100%;
+    align-content: space-between;
+    justify-content: space-between;
+    align-items: center;
+    justify-items: center;
+}
+main section.control.container article{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+    justify-items: center;
+    align-content: center;
+    justify-content: center;
+}
+
+main section.control.container article div{
+    width: 100%;
+    display: grid;
+    grid-template-columns: 150px 150px;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
+    justify-items: center;
+    gap: 10px;
+}
+
+main section.control.container article div *{
+    width: 100%;
+}
+main section.control.container article div label{
+    text-align: right;
+}
+
+main section.control.container article div.buttons{
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+}
+
+main section.control.container article div.buttons button{
+    padding: 5px;
+    width: fit-content;
+}
