@@ -110,7 +110,7 @@ main section.cards-list.container article.card .card-item.join-date {
 }
 
 /* maxi card elements */
-.maximized {
+main section.maximized {
     /* visibility: hidden; */
     position: fixed;
     top: 0px;
@@ -338,6 +338,9 @@ main section.maximized article.edit-card * div.age input{
 .arrow:hover {
     cursor: pointer;
 }
+.maxi-card-item.delete:hover{
+    cursor: pointer;
+}
 button.maxi-card-item,
 button.add-card {
     align-items: center;
@@ -433,6 +436,8 @@ footer section.pages.container article.page-element.current-page {
     cursor: not-allowed;
 }
 
+
+/* buttons */
 main .buttons.container{
     display: flex;
     flex-direction: row;
@@ -442,3 +447,12 @@ main .buttons.container{
     align-items: center;
     justify-items: center;
 }
+
+
+
+
+
+/* filters and search */
+/* main section.control.container{
+    position
+} */

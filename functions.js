@@ -3,7 +3,7 @@ function init(cardsPerPage, cardIndex) {
     cardsContainer.textContent = "";
     pagesContainer.textContent = "";
 
-    totalCards = data.length;
+    totalCards = dataTemp.length;
     totalPages = Math.ceil(totalCards / cardsPerPage);
 
     console.log(cardsPerPage);
@@ -18,7 +18,7 @@ function goToLeft(cardIndex) {
     let prevIndex = cardIndex - 1;
     if (prevIndex >= 0) {
         maximizedWindow.textContent = "";
-        let cardInfo = data[cardIndex - 1];
+        let cardInfo = dataTemp[cardIndex - 1];
         generateMaxiCard(cardInfo, cardIndex - 1);
     }
 }
@@ -26,7 +26,7 @@ function goToRight(cardIndex) {
     let nextIndex = cardIndex + 1;
     if (nextIndex < totalCards) {
         maximizedWindow.textContent = "";
-        let cardInfo = data[nextIndex];
+        let cardInfo = dataTemp[nextIndex];
         generateMaxiCard(cardInfo, nextIndex);
     }
 }
@@ -45,7 +45,7 @@ function createPages(cardsPerPage, cardIndex) {
         generatePage(i + 1, Math.round(cardIndex / cardsPerPage));
     }
     // console.log(cardIndex);
-    loadCards(data, cardIndex, cardsPerPage);
+    loadCards(dataTemp, cardIndex, cardsPerPage);
 }
 function generatePage(pageNumber, currentPage) {
     let article = document.createElement("article");
@@ -180,11 +180,9 @@ function generateCardElements(item) {
 
 // maximize card
 function maximizeCard(card) {
-    console.log(card);
     let email = card.querySelector("* .email").textContent;
-
     let index = getCardIndex(email, 0);
-    let cardInfo = data[index];
+    let cardInfo = dataTemp[index];
     generateMaxiCard(cardInfo, index);
 }
 function generateMaxiCard(cardInfo, index) {
@@ -361,14 +359,14 @@ function getCardInfo(email, offset) {
     let index = getCardIndex(email, offset);
 
     if (index != null) {
-        return data[index];
+        return dataTemp[index];
     } else {
         return index;
     }
 }
 function getCardIndex(email, offset) {
     for (let i = 0; i < totalCards; i++) {
-        if (data[i].email == email) {
+        if (dataTemp[i].email == email) {
             return i + offset;
         }
     }
@@ -511,18 +509,18 @@ function saveMaxiCard(card) {
     let nameArray = oldName.split("-");
 
     if (fullName != "" && fullName.split(" ").length == 2) {
-        data[cardIndex].name.first = fullName.split(" ")[0];
-        data[cardIndex].name.last = fullName.split(" ")[1];
+        dataTemp[cardIndex].name.first = fullName.split(" ")[0];
+        dataTemp[cardIndex].name.last = fullName.split(" ")[1];
         nameArray = fullName.split(" ");
     }
     if (email != "") {
-        data[cardIndex].email = email;
+        dataTemp[cardIndex].email = email;
     }
     if (joinDate != "") {
-        data[cardIndex].registered.date = joinDate;
+        dataTemp[cardIndex].registered.date = joinDate;
     }
     if (age != "") {
-        data[cardIndex].registered.age = age;
+        dataTemp[cardIndex].registered.age = age;
     }
 
     let cardClassName = nameArray[0] + "-" + nameArray[1];
@@ -538,11 +536,11 @@ function deleteMaxiCard(card) {
     let email = card.querySelector("* .email").textContent;
     let cardIndex = getCardIndex(email, 0);
 
-    console.log(data.length);
+    console.log(dataTemp.length);
 
-    data.splice(cardIndex, 1);
+    dataTemp.splice(cardIndex, 1);
 
-    console.log(data.length);
+    console.log(dataTemp.length);
 
     init(cardsPerPage, 0);
     maximizedWindow.textContent = "";
@@ -714,7 +712,9 @@ function addNewUser(card) {
     let portrait = card.querySelector("* .portrait").src;
     let fullName = card.querySelector("* .name").value;
     let email = card.querySelector("* .email").value;
-    let joinDate = card.querySelector("* .join-date").value;
+    let joinDateArray = card.querySelector("* .join-date").value.split("-");
+    let joinDate =
+        joinDateArray[1] + "-" + joinDateArray[2] + "-" + joinDateArray[0];
     let age = card.querySelector("* .age").value;
 
     let firstName = fullName.split(" ")[0];
@@ -727,13 +727,76 @@ function addNewUser(card) {
     newUser.registered.age = age;
     newUser.picture.large = portrait;
 
-    data.push(newUser);
+    dataTemp.push(newUser);
     init(cardsPerPage, 0);
     maximizedWindow.textContent = "";
     maximizedWindow.style.visibility = "hidden";
 }
 function uploadPicture(card) {
     console.log("YEEEEEY");
+}
+
+// filter
+function trimOlder(arr, startDateString) {
+    let startDate = new Date(startDateString);
+    let tempDate;
+    let newArr = [];
+    for (let i = 0; i < arr.length; i++) {
+        let tempDateArray = arr[i].registered.date.split("-");
+        tempDate = new Date(
+            tempDateArray[2] + "-" + tempDateArray[0] + "-" + tempDateArray[1]
+        );
+        if (tempDate > startDate) {
+            newArr.push(arr[i]);
+        }
+    }
+    return newArr;
+}
+function trimNewer(arr, endDateString) {
+    let endDate = new Date(endDateString);
+    let tempDate;
+    let newArr = [];
+    for (let i = 0; i < arr.length; i++) {
+        let tempDateArray = arr[i].registered.date.split("-");
+        tempDate = new Date(
+            tempDateArray[2] + "-" + tempDateArray[0] + "-" + tempDateArray[1]
+        );
+        if (tempDate < endDate) {
+            newArr.push(arr[i]);
+        }
+    }
+    return newArr;
+}
+
+// search
+function searchByName(arr, fullName) {
+    let newArr = [];
+    let name = fullName.split(" ");
+    if (name.length == 2) {
+        console.log("2");
+        for (let i = 0; i < arr.length; i++) {
+            if (
+                (arr[i].name.first.toLowerCase() == name[0].toLowerCase() &&
+                    arr[i].name.last.toLowerCase() == name[1].toLowerCase()) ||
+                (arr[i].name.first.toLowerCase() == name[1].toLowerCase() &&
+                    arr[i].name.last.toLowerCase() == name[0].toLowerCase())
+            ) {
+                newArr.push(arr[i]);
+            }
+        }
+    } else if (name.length == 1) {
+        console.log("1");
+        for (let i = 0; i < arr.length; i++) {
+            if (
+                arr[i].name.first.toLowerCase() == name[0].toLowerCase() ||
+                arr[i].name.last.toLowerCase() == name[0].toLowerCase()
+            ) {
+                newArr.push(arr[i]);
+            }
+        }
+    }
+    console.log(newArr);
+    return newArr;
 }
 
 // helpers
